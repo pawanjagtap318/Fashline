@@ -36,6 +36,7 @@ function App() {
           <Route path="order/:id" element={<OrderDetailsPage />} />
           <Route path="my-orders" element={<MyOrdersPage />} />
         </Route>
+        
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminHomePage />}/>
           <Route path="users" element={<UserManagement />}/>
