@@ -3,16 +3,15 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const dotenv = require("dotenv");
-const {proect, protect} = require("../middleware/authMiddleware");
+const {protect} = require("../middleware/authMiddleware");
 
 dotenv.config();
 
 // @route POST /api/users/register
-// @desc Register s new user
+// @desc Register a new user
 // @access Public
 router.post("/register", async (req, res) => {
     const {name, email, password} = req.body;
-    console.log(process.env.JWT_SECRET);
 
     try {
         // Registration Login
