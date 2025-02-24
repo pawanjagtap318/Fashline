@@ -17,7 +17,7 @@ router.get("/", protect, admin, async (req, res) => {
 });
 
 
-// @route /api/admin/users
+// @route PUSH /api/admin/users
 // @desc Add a new user (admin only)
 // @access Private/Admin
 router.post("/", protect, admin, async (req, res) => {

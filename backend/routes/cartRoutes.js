@@ -88,7 +88,7 @@ router.post("/", async (req, res) => {
 
 
 // @route PUT /api/cart
-// @desc Update product quantity in the cart for a guest pr logged in user
+// @desc Update product quantity in the cart for a guest or logged in user
 // @access Public
 router.put("/", async (req, res) => {
     const { productId, size, color, quantity, guestId, userId } = req.body;
@@ -116,6 +116,7 @@ router.put("/", async (req, res) => {
                 (acc, item) => acc + item.price * item.quantity,
                 0
             );
+
             await cart.save();
             return res.status(200).json(cart);
         } else {
@@ -156,7 +157,7 @@ router.delete("/", async (req, res) => {
             await cart.save();
             return res.status(200).json(cart);
         } else {
-            return res.status(404).json({message: "Product not found in cart."});
+            return res.status(404).json({message: "Product not found in the cart."});
         }
     } catch (error) {
         console.error(error);
