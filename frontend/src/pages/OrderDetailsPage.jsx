@@ -89,16 +89,16 @@ function OrderDetailsPage() {
                         <table className='min-w-full text-gray-600 mb-4'>
                             <thead className='bg-gray-100'>
                                 <tr>
-                                    <th className="py-2 px-4">Name</th>
-                                    <th className="py-2 px-4">Unit Price</th>
-                                    <th className="py-2 px-4">Quantity</th>
-                                    <th className="py-2 px-4">Total</th>
+                                    <th className="py-2 px-4 text-left">Name</th>
+                                    <th className="py-2 px-4 text-left">Unit Price</th>
+                                    <th className="py-2 px-4 text-left">Quantity</th>
+                                    <th className="py-2 px-4 text-left">Total</th>
                                 </tr>
                             </thead>
                             <tbody className='mx-auto'>
                                 {orderDetails.orderItems.map((item) => (
-                                    <tr key={item.productId} className="border-b text-center">
-                                        <td className="py-2 px-4 flex items-center justify-center my-2">
+                                    <tr key={item.productId} className="border-b">
+                                        <td className="py-2 px-4 flex items-center my-2">
                                             <img
                                                 src={item.image}
                                                 alt={item.name}
