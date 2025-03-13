@@ -100,7 +100,7 @@ const productsSlice = createSlice({
             collection: "",
         },
     },
-    reducer: {
+    reducers: {
         setFilters: (state, action) => {
             state.filters = { ...state.filters, ...action.payload };
         },
@@ -174,7 +174,7 @@ const productsSlice = createSlice({
             })
             .addCase(fetchSimilarProducts.fulfilled, (state, action) => {
                 state.loading = false;
-                state.products = action.payload;
+                state.similarProducts = action.payload;
             })
             .addCase(fetchSimilarProducts.rejected, (state, action) => {
                 state.loading = false;

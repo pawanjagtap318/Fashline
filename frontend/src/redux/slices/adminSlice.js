@@ -13,7 +13,7 @@ export const fetchUsers = createAsyncThunk(
                 },
             },
         );
-        response.data;
+        return response.data;
     }
 );
 
@@ -51,7 +51,7 @@ export const updateUser = createAsyncThunk(
                 },
             },
         );
-        response.data;
+        return response.data.user;
     }
 );
 
@@ -113,11 +113,11 @@ const adminSlice = createSlice({
             state.loading = false;
             state.users.push(action.payload.user);  // Add new user to the state
         })
-        .addCase(addUser.pending, (state) => {
+        .addCase(addUser.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload.message;
         });
     },
 });
 
-export default adminSlice.reducer;
+export default adminSlice.reducer;  
