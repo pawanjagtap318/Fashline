@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { updateProduct } from '../../redux/slices/adminProductSlice';
+import { fetchProductDetails } from "../../redux/slices/productsSlice"
 
 function EditProductPage() {
   const dispatch = useDispatch();

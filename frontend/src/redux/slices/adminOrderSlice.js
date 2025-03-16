@@ -10,7 +10,7 @@ export const fetchAllOrders = createAsyncThunk(
                 `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`,
                 {
                     headers: {
-                        Authorization: `${localStorage.getItem("userToken")}`,
+                        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
                     },
                 }
             );
@@ -31,7 +31,7 @@ export const updateOrderStatus = createAsyncThunk(
                 { status },
                 {
                     headers: {
-                        Authorization: `${localStorage.getItem("userToken")}`,
+                        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
                     },
                 }
             );
@@ -51,7 +51,7 @@ export const deleteOrder = createAsyncThunk(
                 `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
                 {
                     headers: {
-                        Authorization: `${localStorage.getItem("userToken")}`,
+                        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
                     },
                 }
             );
@@ -89,6 +89,11 @@ const adminOrderSlice = createSlice({
                 return acc + order.totalPrice;
             }, 0);
             state.totalSales = totalSales;
+
+            const cancelledSales = action.payload.reduce((acc, order) => {
+                return order.status === "Cancelled" ? acc + order.totalPrice : acc;
+            }, 0);
+            state.totalSales = totalSales - cancelledSales;
         })
         .addCase(fetchAllOrders.rejected, (state, action) => {
             state.loading = false;

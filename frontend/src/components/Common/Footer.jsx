@@ -39,23 +39,23 @@ function Footer() {
                 <h3 className='text-lg text-gray-800 mb-4'>Shop</h3>
                 <ul className='space-y-2 text-gray-600'>
                     <li>
-                        <Link to="#" className="hover:text-gray-500 transition-colors">
+                        <Link to="/collections/all?category=Top+Wear&gender=Men" className="hover:text-gray-500 transition-colors">
                           Men's Top Wear
                         </Link>
                     </li>
                     <li>
-                        <Link to="#" className="hover:text-gray-500 transition-colors">
+                        <Link to="/collections/all?category=Top+Wear&gender=Women" className="hover:text-gray-500 transition-colors">
                           Women's Top Wear
                         </Link>
                     </li>
                     <li>
-                        <Link to="#" className="hover:text-gray-500 transition-colors">
+                        <Link to="/collections/all?category=Bottom+Wear&gender=Men" className="hover:text-gray-500 transition-colors">
                           Men's Bottom Wear
                         </Link>
                     </li>
                     <li>
-                        <Link to="#" className="hover:text-gray-500 transition-colors">
-                          Women's Top Wear
+                        <Link to="/collections/all?category=Bottom+Wear&gender=Women" className="hover:text-gray-500 transition-colors">
+                          Women's Bottom Wear
                         </Link>
                     </li>
                 </ul>

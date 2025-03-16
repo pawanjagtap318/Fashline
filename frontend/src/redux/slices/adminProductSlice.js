@@ -40,17 +40,21 @@ export const createProduct = createAsyncThunk(
 // Async thunk to update an existing product
 export const updateProduct = createAsyncThunk(
     "adminProducts/updateProduct",
-    async ({ id, productData }) => {
-        const response = await axios.put(
-            `${API_URL}/api/admin/products/${id}`,
-            productData,
-            {
-                headers: {
-                    Authorization:USER_TOKEN,
+    async ({ id, productData }, { rejectWithValue }) => {
+        try {
+            const response = await axios.put(
+                `${API_URL}/api/products/${id}`,
+                productData,
+                {
+                    headers: {
+                        Authorization: USER_TOKEN,
+                    },
                 },
-            },
-        );
-        return response.data;
+            );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
     }
 );
 

@@ -6,6 +6,7 @@ import { fetchAllOrders } from '../redux/slices/adminOrderSlice';
 
 function AdminHomePage() {
     const dispatch = useDispatch();
+
     const {
         products,
         loading: productsLoading,
@@ -23,6 +24,7 @@ function AdminHomePage() {
         dispatch(fetchAdminProducts());
         dispatch(fetchAllOrders());
     }, [dispatch]);
+    
 
     return (
         <div className='max-w-7xl mx-auto p-6'>

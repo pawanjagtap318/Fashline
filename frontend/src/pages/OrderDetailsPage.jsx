@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom'
 import { fetchOrderDetails } from '../redux/slices/orderSlice';
@@ -35,17 +35,26 @@ function OrderDetailsPage() {
                         </div>
                         <div className="flex flex-col items-start sm:items-end mt-4 sm:mt-0">
                             <span className={`${orderDetails.isPaid
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
                                 } px-3 py-1 rounded-full text-sm font-medium mb-2`}>
                                 {orderDetails.isPaid ? "Approved" : "Pending"}
                             </span>
-                            <span className={`${orderDetails.isDeliveried
+                            {orderDetails && orderDetails.status !== "Cancelled" ? (
+                                <span className={`${orderDetails.isDelivered
                                     ? "bg-green-100 text-green-700"
                                     : "bg-yellow-100 text-yellow-700"
-                                } px-3 py-1 rounded-full text-sm font-medium mb-2`}>
-                                {orderDetails.isDeliveried ? "Delivered" : "Pending Delivery"}
-                            </span>
+                                    } px-3 py-1 rounded-full text-sm font-medium mb-2`}>
+                                    {orderDetails.isDelivered ? "Delivered" : "Pending Delivery"}
+                                </span>
+                            ) : (
+                                <span 
+                                  className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium mb-2"
+                                >
+                                    Cancelled
+                                </span>
+                            )}
+
                         </div>
                     </div>
                     {/* Customer, Payment and Shipping Info */}

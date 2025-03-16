@@ -8,13 +8,27 @@ export default function Topbar() {
     <div className='bg-[#ea2e0e] text-white'>
       <div className='container mx-auto flex justify-between items-center py-3 px-4'>
         <div className='hidden md:flex items-center space-x-4'>
-          <a href="#" className='hover:text-gray-300'>
+          <a
+            href="https://www.facebook.com"
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hover:text-gray-300'
+          >
             <TbBrandMeta className='h-5 w-5' />
           </a>
-          <a href="#" className='hover:text-gray-300'>
+          <a
+            href="https://www.instagram.com"
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hover:text-gray-300'
+          >
             <IoLogoInstagram className='h-5 w-5' />
           </a>
-          <a href="#" className='hover:text-gray-300'>
+          <a
+            href="https://www.twitter.com"
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hover:text-gray-300'>
             <RiTwitterLine className='h-5 w-5' />
           </a>
         </div>
