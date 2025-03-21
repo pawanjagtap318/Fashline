@@ -62,7 +62,7 @@ function EditProductPage() {
       );
       setProductData((prevData) => ({
         ...prevData,
-        images: [...prevData.images, { url: data.imageUrl, altText: "" }],
+        images: [...prevData.images, { url: data.imageUrl, altText: ""}],
       }));
       setUploading(false);
     } catch (error) {

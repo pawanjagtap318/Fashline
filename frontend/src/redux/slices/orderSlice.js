@@ -5,18 +5,28 @@ import axios from "axios";
 export const fetchUserOrders = createAsyncThunk(
     "orders/fetchUserOrders",
     async (_, {rejectWithValue}) => {  // "_" because there is no first parameter
+        const userToken = `Bearer ${localStorage.getItem("userToken")}`;
+
+        if (!userToken) {
+            // If there's no token, reject with an error message.
+            return rejectWithValue("No user token found.");
+        }
+        
         try {
             const response = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URL}/api/orders/my-orders`,
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+                        Authorization: userToken,
                     },
                 }
             );
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            const errorMsg = error.response
+                ? error.response.data
+                : error.message || "An unknown error occurred";
+            return rejectWithValue(errorMsg);
         }
     }
 );

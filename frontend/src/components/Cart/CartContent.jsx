@@ -96,6 +96,7 @@ function CartContent({ cart, userId, guestId }) {
       ))}
     </div>
   )
-}
+};
 
-export default CartContent
+
+export default CartContent;

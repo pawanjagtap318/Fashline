@@ -72,7 +72,11 @@ export const updateCartItemQuantity = createAsyncThunk(
             );
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            const message =
+                error.response && error.response.data
+                    ? error.response.data
+                    : error.message || "Something went wrong";
+            return rejectWithValue(message);
         }
     }
 );
@@ -87,10 +91,15 @@ export const removeFromCart = createAsyncThunk(
                 url: `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
                 data: { productId, guestId, userId, size, color },
             });
+            
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
+            const message =
+              error.response && error.response.data
+                ? error.response.data
+                : error.message || "Something went wrong";
+            return rejectWithValue(message);
+          }
     }
 );
 
