@@ -28,7 +28,7 @@ function Navbar() {
 
         {/* Left - Logo */}
         <div>
-          <Link to='/' className='text-2xl font-medium'>
+          <Link to='/' className='border-b-6 border-x-2 border-blue-300 border text-3xl bg-gray-200 px-2 py-1 rounded-2xl font-extrabold tracking-wider'>
             Fashline
           </Link>
         </div>
