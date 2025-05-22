@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 app.get("/", (req, res) => {
-    res.send("Welcome to Rabbit API!");
+    res.send("Welcome to Fashline API!");
 });
 
 // API routes

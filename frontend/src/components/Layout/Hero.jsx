@@ -1,5 +1,5 @@
 import React from 'react'
-import heroImg from "../../assets/rabbit-hero.webp"
+import heroImg from "../../assets/fashline-hero.webp"
 import { Link } from 'react-router-dom'
 
 function Hero() {
@@ -7,7 +7,7 @@ function Hero() {
     <section className='relative'>
       <img
         src={heroImg}
-        alt="Rabbit"
+        alt="Fashline"
         className='w-full h-[400px] md:h-[600px] lg:h-[750px] object-cover z-0'
       />
       <div className='absolute inset-0 bg-opacity-10 flex items-center justify-center pointer-events-none'>

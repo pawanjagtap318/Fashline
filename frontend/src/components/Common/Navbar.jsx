@@ -29,7 +29,7 @@ function Navbar() {
         {/* Left - Logo */}
         <div>
           <Link to='/' className='text-2xl font-medium'>
-            Rabbit
+            Fashline
           </Link>
         </div>
 

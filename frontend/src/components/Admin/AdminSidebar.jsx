@@ -24,7 +24,7 @@ function AdminSidebar({toggleSidebar}) {
                   onClick={toggleSidebar} 
                   className='text-2xl font-medium'
                 >
-                    Rabbit
+                    Fashline
                 </Link>
             </div>
             <h2 className="text-xl font-medium mb-6 text-center">Admin Dashboard</h2>
