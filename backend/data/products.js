@@ -402,7 +402,7 @@ const products = [
     gender: "Men",
     images: [
       {
-        url: "https://neogarments.com/cdn/shop/files/IMG_5501.jpg?v=1693480560&width=800",
+        url: "https://gitu.net/imgs/free-psd-mockups-download/600x0_bottom-mockup-psd-free-download-i2.jpg",
         altText: "Track Pants Front View",
       },
     ],
@@ -882,7 +882,7 @@ const products = [
     gender: "Women",
     images: [
       {
-        url: "https://images.bestsellerclothing.in/data/only/09-july-2024/900749701_g6.jpg?width=1080&height=1355&mode=fill&fill=blur&format=auto",
+        url: "https://infinia.in/cdn/shop/products/6_ad4bbebf-0463-4d16-9fdb-96156a1a3602.jpg?v=1674021274",
         altText: "Graphic Print Tee",
       },
     ],
@@ -978,7 +978,7 @@ const products = [
     gender: "Women",
     images: [
       {
-        url: "https://images.bestsellerclothing.in/data/only/07-nov-2024/901324302_g2.jpg?width=1080&height=1355&mode=fill&fill=blur&format=auto",
+        url: "https://assets.ajio.com/medias/sys_master/root/20230630/wHPa/649f0207a9b42d15c92e0968/-473Wx593H-466323045-brown-MODEL.jpg",
         altText: "V-Neck Wrap Top",
       },
     ],

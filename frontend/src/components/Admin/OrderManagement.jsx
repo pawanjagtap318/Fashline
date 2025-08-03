@@ -34,7 +34,7 @@ function OrderManagement() {
           <thead className="bg-gray-100 text-xs uppercase text-gray-700">
             <tr>
               <th className="py-3 px-4">Order ID</th>
-              <th className="py-3 px-4">Customer</th>
+              {/* <th className="py-3 px-4">Customer</th> */}
               <th className="py-3 px-4">Total Price</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4">Actions</th>
@@ -50,7 +50,7 @@ function OrderManagement() {
                   <td className="py-4 px-4 font-medium text-gray-900 whitespace-nowrap">
                     #{order._id}
                   </td>
-                  <td className="p-4">{order.user.name}</td>
+                  {/* <td className="p-4">{order.user.name}</td> */}
                   <td className="p-4">${order.totalPrice.toFixed(2)}</td>
                   <td className="p-4">
                     <select

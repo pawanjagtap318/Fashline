@@ -50,11 +50,11 @@ function UserManagement() {
     };
 
     const handleRoleChange = (userId, newRole) => {
-        dispatch(updateUser({id: userId, role: newRole}));
+        dispatch(updateUser({ id: userId, role: newRole }));
     };
 
     const handleDeletedUser = (userId) => {
-        if(window.confirm("Are you sure you want to delete this user?")) {
+        if (window.confirm("Are you sure you want to delete this user?")) {
             dispatch(deleteUser(userId));
         };
     };
@@ -133,26 +133,26 @@ function UserManagement() {
                     </thead>
                     <tbody>
                         {users.map((user) => (
-                            <tr 
-                              key={user._id} 
-                              className="border-b hover:bg-gray-50"
+                            <tr
+                                key={user._id}
+                                className="border-b hover:bg-gray-50"
                             >
                                 <td className="p-4 font-medium text-gray-900 whitespace-nowrap">
                                     {user.name}
                                 </td>
                                 <td className="p-4">{user.email}</td>
                                 <td className="p-4">
-                                    <select 
-                                      value={user.role}
-                                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                                      className='p-2 border rounded'
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                                        className='p-2 border rounded'
                                     >
                                         <option value="customer">Customer</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </td>
                                 <td className="p-4">
-                                    <button 
+                                    <button
                                         onClick={() => handleDeletedUser(user._id)}
                                         className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'
                                     >
