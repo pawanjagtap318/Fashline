@@ -92,10 +92,16 @@ const adminOrderSlice = createSlice({
                 }, 0);
                 state.totalSales = totalSales;
 
-                const cancelledSales = action.payload.reduce((acc, order) => {
-                    return order.status === "Cancelled" ? acc + order.totalPrice : acc;
+                // const cancelledSales = action.payload.reduce((acc, order) => {
+                //     return order.status === "Cancelled" ? acc + order.totalPrice : acc;
+                // }, 0);
+                
+                // Calculate not delivered sales
+                const notDeliveredSales = action.payload.reduce((acc, order) => {
+                    return order.status !== "Delivered" ? acc + order.totalPrice : acc;
                 }, 0);
-                state.totalSales = totalSales - cancelledSales;
+
+                state.totalSales = totalSales - notDeliveredSales; 
             })
             .addCase(fetchAllOrders.rejected, (state, action) => {
                 state.loading = false;
