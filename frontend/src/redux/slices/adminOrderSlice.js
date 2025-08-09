@@ -74,45 +74,47 @@ const adminOrderSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-        // Fetch all orders
-        .addCase(fetchAllOrders.pending, (state) => {
-            state.loading = true;
-            state.error = null;
-        })
-        .addCase(fetchAllOrders.fulfilled, (state, action) => {
-            state.loading = false;
-            state.orders = action.payload;
-            state.totalOrders = action.payload.length;
+            // Fetch all orders
+            .addCase(fetchAllOrders.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchAllOrders.fulfilled, (state, action) => {
+                state.loading = false;
+                state.orders = [...action.payload].sort((a, b) =>
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
+                state.totalOrders = action.payload.length;
 
-            // Calculate total sales
-            const totalSales = action.payload.reduce((acc, order) => {
-                return acc + order.totalPrice;
-            }, 0);
-            state.totalSales = totalSales;
+                // Calculate total sales
+                const totalSales = action.payload.reduce((acc, order) => {
+                    return acc + order.totalPrice;
+                }, 0);
+                state.totalSales = totalSales;
 
-            const cancelledSales = action.payload.reduce((acc, order) => {
-                return order.status === "Cancelled" ? acc + order.totalPrice : acc;
-            }, 0);
-            state.totalSales = totalSales - cancelledSales;
-        })
-        .addCase(fetchAllOrders.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message;
-        })
-        .addCase(updateOrderStatus.fulfilled, (state, action) => {
-            const updatedOrder = action.payload;
-            const orderIndex = state.orders.findIndex(
-                (order) => order._id === updatedOrder._id
-            );
-            if(orderIndex !== -1) {
-                state.orders[orderIndex] = updatedOrder;
-            }
-        })
-        .addCase(deleteOrder.fulfilled, (state, action) => {
-            state.orders = state.orders.filter(
-                (order) => order._id !== action.payload
-            );
-        });
+                const cancelledSales = action.payload.reduce((acc, order) => {
+                    return order.status === "Cancelled" ? acc + order.totalPrice : acc;
+                }, 0);
+                state.totalSales = totalSales - cancelledSales;
+            })
+            .addCase(fetchAllOrders.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            .addCase(updateOrderStatus.fulfilled, (state, action) => {
+                const updatedOrder = action.payload;
+                const orderIndex = state.orders.findIndex(
+                    (order) => order._id === updatedOrder._id
+                );
+                if (orderIndex !== -1) {
+                    state.orders[orderIndex] = updatedOrder;
+                }
+            })
+            .addCase(deleteOrder.fulfilled, (state, action) => {
+                state.orders = state.orders.filter(
+                    (order) => order._id !== action.payload
+                );
+            });
     },
 });
 

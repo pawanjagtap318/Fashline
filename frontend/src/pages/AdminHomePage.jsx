@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { fetchAdminProducts } from '../redux/slices/adminProductSlice';
 import { fetchAllOrders } from '../redux/slices/adminOrderSlice';
 
@@ -24,7 +24,7 @@ function AdminHomePage() {
         dispatch(fetchAdminProducts());
         dispatch(fetchAllOrders());
     }, [dispatch]);
-    
+
 
     return (
         <div className='max-w-7xl mx-auto p-6'>
@@ -40,20 +40,38 @@ function AdminHomePage() {
                     <div className="p-4 shadow-md rounded-lg">
                         <h2 className="text-xl font-semibold">Revenue</h2>
                         <p className="text-2xl">${totalSales.toFixed(2)}</p>
+                        <div className='mt-2'>
+                            <NavLink
+                                to="/admin/revenue"
+                                className='text-blue-500 hover:underline cursor-pointer'
+                            >
+                                View
+                            </NavLink>
+                        </div>
                     </div>
                     <div className="p-4 shadow-md rounded-lg">
                         <h2 className="text-xl font-semibold">Total Orders</h2>
                         <p className="text-2xl">{totalOrders}</p>
-                        <Link to="/admin/orders" className='text-blue-500 hover:underline'>
-                            Manage Orders
-                        </Link>
+                        <div className='flex flex-col space-y-2 mt-2'>
+                            <NavLink to="/admin/totalOrders" className='text-blue-500 hover:underline cursor-pointer'>
+                                View
+                            </NavLink>
+                            <NavLink to="/admin/orders" className='text-blue-500 hover:underline cursor-pointer'>
+                                Manage Orders
+                            </NavLink>
+                        </div>
                     </div>
                     <div className="p-4 shadow-md rounded-lg">
                         <h2 className="text-xl font-semibold">Total Products</h2>
                         <p className="text-2xl">{products.length}</p>
-                        <Link to="/admin/products" className='text-blue-500 hover:underline'>
+                        <div className='flex flex-col space-y-2 mt-2'>
+                            <NavLink to="/admin/allProducts" className='text-blue-500 hover:underline cursor-pointer'>
+                                View
+                            </NavLink>
+                            <NavLink to="/admin/products" className='text-blue-500 hover:underline cursor-pointer'>
                             Manage Products
-                        </Link>
+                        </NavLink>
+                        </div>
                     </div>
                 </div>
             )}
@@ -70,7 +88,7 @@ function AdminHomePage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {orders.length > 0 ? (
+                            {orders?.length > 0 ? (
                                 orders.map((order) => (
                                     <tr key={order._id} className="border-b hover:bg-gray-50 cursor-pointer">
                                         <td className="p-4">{order._id}</td>

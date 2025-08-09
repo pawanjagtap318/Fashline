@@ -128,6 +128,38 @@ router.put("/:id", protect, admin, async (req, res) => {
 });
 
 
+// @route PUT /api/products/:id/reduce-stock
+// @desc Reduce product stock after order confirmation
+// @access Private/Admin
+router.put("/:id/reduce-stock", protect, admin, async (req, res) => {
+    try {
+        const { quantity } = req.body;
+
+        const product = await Product.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        if (product.countInStock < quantity) {
+            return res.status(400).json({ message: "Not enough stock available" });
+        }
+
+        product.countInStock = product.countInStock - quantity;
+
+        const updatedProduct = await product.save();
+
+        res.json({
+            message: "Product stock reduced successfully",
+            product: updatedProduct,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server Error" });
+    }
+});
+
+
 // @route DELETE /api/products/:id
 // @desc Delete an existing product ID
 // @access Private/Admin
@@ -155,69 +187,69 @@ router.delete("/:id", protect, admin, async (req, res) => {
 // @access Public
 router.get("/", async (req, res) => {
     try {
-        const { 
-            collection, 
-            size, 
-            color, 
-            gender, 
+        const {
+            collection,
+            size,
+            color,
+            gender,
             minPrice,
             maxPrice,
             sortBy,
-            search, 
-            category, 
-            material, 
-            brand, 
+            search,
+            category,
+            material,
+            brand,
             limit
         } = req.query;
 
         let query = {};
 
         // Filter Logic
-        if(collection && collection.toLocaleLowerCase() !== "all") {
+        if (collection && collection.toLocaleLowerCase() !== "all") {
             query.collections = collection;
         }
 
-        if(category && category.toLocaleLowerCase() !== "all") {
+        if (category && category.toLocaleLowerCase() !== "all") {
             query.category = category;
         }
 
-        if(material) {
-            query.material = { $in: material.split(",")};
+        if (material) {
+            query.material = { $in: material.split(",") };
         }
 
-        if(brand) {
-            query.brand = { $in: brand.split(",")};
+        if (brand) {
+            query.brand = { $in: brand.split(",") };
         }
 
-        if(size) {
-            query.sizes = { $in: size.split(",")};
+        if (size) {
+            query.sizes = { $in: size.split(",") };
         }
 
-        if(color) {
-            query.colors = { $in: [color]};
+        if (color) {
+            query.colors = { $in: [color] };
         }
 
-        if(gender) {
+        if (gender) {
             query.gender = gender;
         }
 
-        if(minPrice || maxPrice) {
+        if (minPrice || maxPrice) {
             query.price = {};
             if (minPrice) query.price.$gte = Number(minPrice);
             if (maxPrice) query.price.$lte = Number(maxPrice);
         }
 
-        if(search) {
+        if (search) {
             query.$or = [
-                { name: {$regex: search, $options: "i"}},
-                { description: {$regex: search, $options: "i"}},
+                { name: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
             ];
         }
 
         // Sort Logic
         let sort = {};
-        
-        if(sortBy) {
+
+        if (sortBy) {
             switch (sortBy) {
                 case "priceAsc":
                     sort = { price: 1 };
@@ -248,11 +280,11 @@ router.get("/", async (req, res) => {
 // @access Public
 router.get("/best-seller", async (req, res) => {
     try {
-        const bestSeller = await Product.findOne().sort({ rating: -1});
-        if(bestSeller) {
+        const bestSeller = await Product.findOne().sort({ rating: -1 });
+        if (bestSeller) {
             res.json(bestSeller);
         } else {
-            res.status(404).json({message: "No best seller found."});
+            res.status(404).json({ message: "No best seller found." });
         }
     } catch (error) {
         console.error(error);
@@ -283,10 +315,10 @@ router.get("/:id", async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
 
-        if(product) {
+        if (product) {
             res.json(product);
         } else {
-            res.status(404).json({message: "Product not Found."});
+            res.status(404).json({ message: "Product not Found." });
         }
     } catch (error) {
         console.error(error);
@@ -299,15 +331,15 @@ router.get("/:id", async (req, res) => {
 // @desc Retrive similar products based on the current product's gender and category
 // @access Public
 router.get("/similar/:id", async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     try {
         const product = await Product.findById(id);
 
-        if(!product) return res.status(404).json({message: "Product not Found"});
+        if (!product) return res.status(404).json({ message: "Product not Found" });
 
         const similarProducts = await Product.find({
-            _id: { $ne: id},  // Exclude the current product ID
+            _id: { $ne: id },  // Exclude the current product ID
             gender: product.gender,
             category: product.category,
         }).limit(4);

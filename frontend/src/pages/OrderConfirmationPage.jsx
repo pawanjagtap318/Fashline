@@ -3,26 +3,57 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearCart } from '../redux/slices/cartSlice';
 
+
 function OrderConfirmationPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { checkout } = useSelector((state) => state.checkout);
+    const { user } = useSelector((state) => state.auth);
 
-    // Clear the cart when the order is confirmed
-    useEffect(() => {
-        if(checkout && checkout._id) {
-            dispatch(clearCart());
-            localStorage.removeItem("cart");
-        } else {
-            navigate("/my-orders");
-        }
-    }, [checkout, dispatch, navigate]);
+    // // Clear the cart when the order is confirmed
+    // useEffect(() => {
+    //     if (checkout && checkout._id) {
+    //         dispatch(clearCart());
+    //         localStorage.removeItem("cart");
+    //     } else {
+    //         navigate("/my-orders");
+    //     }
+    // }, [checkout, dispatch, navigate]);
 
     const calculatedEstimatedDelivery = (createdAt) => {
         const orderDate = new Date(createdAt);
         orderDate.setDate(orderDate.getDate() + 10);  // Add 10 days to the order date
         return orderDate.toLocaleDateString();
     };
+
+    useEffect(() => {
+        const updateProductStock = async () => {
+            if (checkout && checkout._id) {
+                for (const item of checkout.checkoutItems) {
+                    try {
+                        await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/products/${item.productId}/reduce-stock`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+                            },
+                            body: JSON.stringify({ quantity: item.quantity }),
+                        });
+                    } catch (error) {
+                        console.error("Error reducing stock:", error);
+                    }
+                }
+
+                dispatch(clearCart());
+                localStorage.removeItem("cart");
+            } else {
+                navigate("/my-orders");
+            }
+        };
+
+        updateProductStock();
+    }, [checkout, dispatch, navigate, user]);
+
 
 
     return (
@@ -51,14 +82,14 @@ function OrderConfirmationPage() {
                             </p>
                         </div>
                     </div>
-                    {/* Ordered tems */}
+                    {/* Ordered Items */}
                     <div className="mb-20">
                         {checkout.checkoutItems.map((item) => (
                             <div key={item.productId} className="flex items-center mb-4">
-                                <img 
-                                  src={item.image}
-                                  alt={item.name}
-                                  className='w-20 h-20 object-cover rounded-md mr-4'
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className='w-20 h-20 object-cover rounded-md mr-4'
                                 />
                                 <div>
                                     <h4 className="text-lg font-semibold">{item.name}</h4>
@@ -75,7 +106,7 @@ function OrderConfirmationPage() {
                     </div>
                     {/* Payment and Delivery Info */}
                     <div className="grid grid-cols-2 gap-8">
-                        
+
                         {/* Payment Info */}
                         <div>
                             <h4 className="text-lg font-semibold mb-2">Payment</h4>
