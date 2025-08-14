@@ -12,6 +12,7 @@ const subscribeRoute = require("./routes/subscribeRoute");
 const adminRoutes = require("./routes/adminRoutes");
 const productAdminRoutes = require("./routes/productAdminRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/checkout", checkoutRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api", subscribeRoute);
+app.use("/api/chat", chatRoutes);
 
 // Admin
 app.use("/api/admin/users", adminRoutes);

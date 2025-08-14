@@ -1,17 +1,20 @@
-import React from 'react'
 import { Link } from "react-router-dom"
 import { HiOutlineUser, HiOutlineShoppingBag, HiBars3BottomRight } from "react-icons/hi2"
+import { IoChatbubblesOutline } from 'react-icons/io5'
 import SearchBar from './SearchBar'
 import CartDrawer from '../Layout/CartDrawer'
 import { useState } from 'react'
 import { IoMdClose } from 'react-icons/io'
 import { useSelector } from 'react-redux'
+import ChatBox from '../AI/ChatBox'
 
 function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const { cart } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
+  const [chatBoxOpen, setChatBoxOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const cartItemCount = cart?.products?.reduce((total, product) => total + product.quantity, 0) || 0;
 
@@ -22,6 +25,11 @@ function Navbar() {
   const togglCartDrawer = () => {
     setDrawerOpen(!drawerOpen);
   }
+
+  const handleChatBoxToggle = () => {
+    setChatBoxOpen(!chatBoxOpen);
+  }
+
   return (
     <>
       <nav className='container mx-auto flex items-center justify-between py-4 px-6'>
@@ -53,11 +61,11 @@ function Navbar() {
         <div className='flex items-center space-x-4'>
           {user && user.role === "admin" && (
             <Link
-            to='/admin'
-            className='block bg-black py-1 px-2 rounded text-sm text-white'
-          >
-            Admin
-          </Link>
+              to='/admin'
+              className='block bg-black py-1 px-2 rounded text-sm text-white'
+            >
+              Admin
+            </Link>
           )}
           <Link
             to="/profile"
@@ -78,14 +86,26 @@ function Navbar() {
           <div className='overflow-hidden'>
             <SearchBar />
           </div>
+          <div
+            onClick={handleChatBoxToggle}
+            className="relative cursor-pointer text-white rounded-full p-2 bg-sky-500 hover:bg-sky-600 transition duration-300 shadow-lg hover:shadow-xl"
+          >
+            <IoChatbubblesOutline size={22} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                {unreadCount}
+              </span>
+            )}
+          </div>
           <button onClick={toggleNavDrawer} className='md:hidden'>
             <HiBars3BottomRight className='h-6 w-6 text-gray-700' />
           </button>
         </div>
       </nav>
       <CartDrawer drawerOpen={drawerOpen} togglCartDrawer={togglCartDrawer} />
+      <ChatBox chatBoxOpen={chatBoxOpen} setChatBoxOpen={setChatBoxOpen} />
 
-      {/* Mobile Navigation  */}
+      {/* Mobile Navigation */}
       <div className={`fixed top-0 left-0 w-3/4 sm:w-1/2 md:w-1/3 h-full bg-white shadow-lg 
         transform transition-transform duration-300 z-50 ${navDrawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
