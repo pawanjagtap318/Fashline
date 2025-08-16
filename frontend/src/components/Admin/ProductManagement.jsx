@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAdminProducts } from "../../redux/slices/adminProductSlice";
 import { deleteProduct } from "../../redux/slices/adminProductSlice";
 
 
 function ProductManagement() {
-   const dispatch = useDispatch();
-   const { products, loading, error } = useSelector(
-    (state) => state.adminProducts
-   );
+    const dispatch = useDispatch();
+    const { products, loading, error } = useSelector(
+        (state) => state.adminProducts
+    );
 
-   useEffect(() => {
-    dispatch(fetchAdminProducts());
-   }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchAdminProducts());
+    }, [dispatch]);
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete the product?")) {
@@ -26,7 +26,12 @@ function ProductManagement() {
 
     return (
         <div className='max-w-7xl mx-auto p-6'>
-            <h2 className="text-2xl font-bold mb-6">Product Management</h2>
+            <h2 className="text-2xl font-bold mb-2">Product Management</h2>
+            <div className='place-self-end mr-10 mb-4'>
+                <NavLink to="/admin/allProducts" className='text-blue-500 hover:underline cursor-pointer'>
+                    View Products Charts
+                </NavLink>
+            </div>
             <div className="overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="min-w-full text-left text-gray-500">
                     <thead className="bg-gray-100 text-xs uppercase text-gray-700">

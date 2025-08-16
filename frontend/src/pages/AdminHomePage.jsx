@@ -1,10 +1,15 @@
-import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { fetchAdminProducts } from '../redux/slices/adminProductSlice';
 import { fetchAllOrders } from '../redux/slices/adminOrderSlice';
+import { useEffect, useState } from 'react';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 function AdminHomePage() {
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [orderLimit, setOrderLimit] = useState("");
     const dispatch = useDispatch();
 
     const {
@@ -24,6 +29,56 @@ function AdminHomePage() {
         dispatch(fetchAdminProducts());
         dispatch(fetchAllOrders());
     }, [dispatch]);
+
+    const exportOrdersToExcel = () => {
+        let filteredOrders = [...orders];
+
+        // Filter by date range
+        if (fromDate) {
+            filteredOrders = filteredOrders.filter(order =>
+                new Date(order.createdAt) >= new Date(fromDate)
+            );
+        }
+        if (toDate) {
+            filteredOrders = filteredOrders.filter(order =>
+                new Date(order.createdAt) <= new Date(toDate)
+            );
+        }
+
+        // Limit last N orders
+        if (orderLimit) {
+            filteredOrders = filteredOrders.slice(-Number(orderLimit));
+        }
+
+        if (filteredOrders.length === 0) {
+            alert("No orders found for the selected filters.");
+            return;
+        }
+
+        // Prepare data for Excel
+        const data = filteredOrders.map(order => ({
+            "Order ID": order._id,
+            "User ID": order.user,
+            "Product Name": order.orderItems.map(item => item.name).join(", "),
+            "Product Quantity": order.orderItems.map(item => item.quantity).join(", "),
+            "Product Size": order.orderItems.map(item => item.size).join(", "),
+            "Product Color": order.orderItems.map(item => item.color).join(", "),
+            "Product Price": order.orderItems.map(item => item.price).join(", "),
+            "Total Price": order.totalPrice,
+            "Status": order.status,
+            "Created At": new Date(order.createdAt).toLocaleString(),
+            "Address": "Address: " + order.shippingAddress.address + ", City: " + order.shippingAddress.city
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+        // Save file
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, `Orders_${Date.now()}.xlsx`);
+    };
 
 
     return (
@@ -69,14 +124,51 @@ function AdminHomePage() {
                                 View
                             </NavLink>
                             <NavLink to="/admin/products" className='text-blue-500 hover:underline cursor-pointer'>
-                            Manage Products
-                        </NavLink>
+                                Manage Products
+                            </NavLink>
                         </div>
                     </div>
                 </div>
             )}
-            <div className="mt-6">
-                <h2 className="text-2xl font-bold mb-4">Recent Orders</h2>
+            <div className="mt-12">
+                <h2 className="text-3xl font-bold mb-4">Recent Orders</h2>
+                <div className="flex flex-wrap gap-4 mb-4 items-end">
+                    <div>
+                        <label className="block text-sm font-medium">From Date</label>
+                        <input
+                            type="date"
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
+                            className="border rounded px-3 py-2"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">To Date</label>
+                        <input
+                            type="date"
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                            className="border rounded px-3 py-2"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">Last N Orders</label>
+                        <input
+                            type="number"
+                            min="1"
+                            value={orderLimit}
+                            onChange={(e) => setOrderLimit(e.target.value)}
+                            placeholder="e.g. 10"
+                            className="border rounded px-3 py-2"
+                        />
+                    </div>
+                    <button
+                        onClick={exportOrdersToExcel}
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                    >
+                        Download Excel
+                    </button>
+                </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-left text-gray-500">
                         <thead className="bg-gray-100 text-xs uppercase text-gray-700">

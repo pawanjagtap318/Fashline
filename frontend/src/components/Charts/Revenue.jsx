@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAllOrders } from "../../redux/slices/adminOrderSlice";
 import { useDispatch } from "react-redux";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const styles = {
     container: {
@@ -85,6 +87,10 @@ function Revenue() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [fromYear, setFromYear] = useState(new Date().getFullYear());
+    const [fromMonth, setFromMonth] = useState(new Date().getMonth() + 1);
+    const [toYear, setToYear] = useState(new Date().getFullYear());
+    const [toMonth, setToMonth] = useState(new Date().getMonth() + 1);
 
     useEffect(() => {
         if (!user || user.role !== "admin") {
@@ -121,6 +127,50 @@ function Revenue() {
 
     const data = getChartData(orders);
 
+    const exportToExcel = () => {
+        let monthlyData = {};
+
+        orders.forEach((order) => {
+            if (!order.deliveredAt) return;
+            const date = new Date(order.deliveredAt);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+
+            const startKey = fromYear * 100 + fromMonth;
+            const endKey = toYear * 100 + toMonth;
+            const currentKey = year * 100 + month;
+
+            // Filter by range
+            if (currentKey >= startKey && currentKey <= endKey) {
+                const key = `${year}-${month.toString().padStart(2, "0")}`;
+                if (!monthlyData[key]) {
+                    monthlyData[key] = { month: key, orders: 0, revenue: 0 };
+                }
+                monthlyData[key].orders += 1;
+                monthlyData[key].revenue += order.totalPrice;
+            }
+        });
+
+        const excelData = Object.values(monthlyData).map((item) => ({
+            Month: item.month,
+            Orders: item.orders,
+            Revenue: parseFloat(item.revenue.toFixed(2)),
+        }));
+
+        if (excelData.length === 0) {
+            alert("No data found for the selected range.");
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Monthly Orders");
+
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(blob, `Orders_${fromYear}-${fromMonth}_to_${toYear}-${toMonth}.xlsx`);
+    };
+
     if (loading) return <p>Loading...</p>
     if (error) return <p>Error: {error}</p>
 
@@ -130,6 +180,83 @@ function Revenue() {
 
             {loading && <p style={styles.message}>Loading order data...</p>}
             {error && <p style={styles.errorMessage}>Error: {error}. Please try again.</p>}
+
+            <div
+                style={{
+                    display: "flex",
+                    gap: "20px",
+                    marginBottom: "25px",
+                    flexWrap: "wrap",
+                    background: "#f9fafb",
+                    padding: "15px 20px",
+                    borderRadius: "10px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                    alignItems: "flex-end",
+                }}
+            >
+                {[
+                    { label: "From Year", value: fromYear, onChange: (e) => setFromYear(Number(e.target.value)), options: [2024, 2025, 2026, 2027] },
+                    { label: "From Month", value: fromMonth, onChange: (e) => setFromMonth(Number(e.target.value)), options: monthNames.map((m, i) => ({ label: m, value: i + 1 })) },
+                    { label: "To Year", value: toYear, onChange: (e) => setToYear(Number(e.target.value)), options: [2024, 2025, 2026, 2027] },
+                    { label: "To Month", value: toMonth, onChange: (e) => setToMonth(Number(e.target.value)), options: monthNames.map((m, i) => ({ label: m, value: i + 1 })) },
+                ].map((field, index) => (
+                    <div key={index} style={{ display: "flex", flexDirection: "column", minWidth: "120px" }}>
+                        <label style={{ fontSize: "0.9rem", fontWeight: "600", color: "#374151", marginBottom: "5px" }}>
+                            {field.label}
+                        </label>
+                        <select
+                            value={field.value}
+                            onChange={field.onChange}
+                            style={{
+                                padding: "8px 12px",
+                                borderRadius: "6px",
+                                border: "1px solid #d1d5db",
+                                fontSize: "0.95rem",
+                                backgroundColor: "white",
+                                cursor: "pointer",
+                                transition: "border-color 0.2s ease",
+                            }}
+                            onMouseOver={(e) => (e.target.style.borderColor = "#4F46E5")}
+                            onMouseOut={(e) => (e.target.style.borderColor = "#d1d5db")}
+                        >
+                            {field.options.map((opt, i) =>
+                                typeof opt === "object" ? (
+                                    <option key={i} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ) : (
+                                    <option key={i} value={opt}>
+                                        {opt}
+                                    </option>
+                                )
+                            )}
+                        </select>
+                    </div>
+                ))}
+
+                <button
+                    onClick={exportToExcel}
+                    style={{
+                        backgroundColor: "#4F46E5",
+                        color: "white",
+                        padding: "10px 18px",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        fontSize: "0.95rem",
+                        boxShadow: "0 2px 6px rgba(79, 70, 229, 0.3)",
+                        transition: "background-color 0.2s ease, transform 0.1s ease",
+                    }}
+                    onMouseOver={(e) => (e.target.style.backgroundColor = "#4338CA")}
+                    onMouseOut={(e) => (e.target.style.backgroundColor = "#4F46E5")}
+                    onMouseDown={(e) => (e.target.style.transform = "scale(0.97)")}
+                    onMouseUp={(e) => (e.target.style.transform = "scale(1)")}
+                >
+                    📥 Download Excel
+                </button>
+            </div>
+
 
             <div style={{ marginBottom: '20px' }}>
                 <label htmlFor="year-select" style={{ marginRight: '10px' }}>Select Year:</label>

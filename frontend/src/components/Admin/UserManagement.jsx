@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { addUser, deleteUser, fetchUsers, updateUser } from '../../redux/slices/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import * as XLSX from "xlsx";
 
 function UserManagement() {
     const dispatch = useDispatch();
@@ -59,13 +60,38 @@ function UserManagement() {
         };
     };
 
+    const exportToExcel = () => {
+        const formattedData = users.map(u => ({
+            UserID: u._id,
+            Name: u.name,
+            Email: u.email,
+            Role: u.role,
+            CreatedAt: new Date(u.createdAt).toLocaleString()
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(formattedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+        XLSX.writeFile(workbook, "users_data.xlsx");
+    };
+
     return (
         <div className='max-w-7xl mx-auto p-6'>
-            <h2 className="text-2xl font-bold mb-6">User Management</h2>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">User Management</h2>
+                <button
+                    onClick={exportToExcel}
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                >
+                    📥 Download Excel
+                </button>
+            </div>
+
             {loading && <p>Loading...</p>}
             {error && <p>Error: {error}</p>}
+
             {/* Add New User Form */}
-            <div className="p-6 rounded-lg mb-6">
+            <div className="p-6 rounded-lg mb-6 bg-gray-50 shadow">
                 <h3 className="text-lg font-bold mb-4">Add New User</h3>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -114,7 +140,7 @@ function UserManagement() {
                             <option value="admin">Admin</option>
                         </select>
                     </div>
-                    <button type='submit' className='bg-green-500 text-white py-2 px-4 rounded hover:bg-gray-600'>
+                    <button type='submit' className='bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600'>
                         Add User
                     </button>
                 </form>
@@ -133,13 +159,8 @@ function UserManagement() {
                     </thead>
                     <tbody>
                         {users.map((user) => (
-                            <tr
-                                key={user._id}
-                                className="border-b hover:bg-gray-50"
-                            >
-                                <td className="p-4 font-medium text-gray-900 whitespace-nowrap">
-                                    {user.name}
-                                </td>
+                            <tr key={user._id} className="border-b hover:bg-gray-50">
+                                <td className="p-4 font-medium text-gray-900 whitespace-nowrap">{user.name}</td>
                                 <td className="p-4">{user.email}</td>
                                 <td className="p-4">
                                     <select

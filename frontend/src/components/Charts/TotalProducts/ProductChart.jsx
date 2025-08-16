@@ -5,6 +5,7 @@ import { fetchAdminProducts } from "../../../redux/slices/adminProductSlice";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { fetchAllOrders } from "../../../redux/slices/adminOrderSlice";
+import * as XLSX from "xlsx";
 
 
 const COLORS = {
@@ -60,15 +61,40 @@ function ProductChart() {
         }));
     };
 
-    // These below of collections and also in revenue add monthly revenue for chart on each bar
-    // revenue is wrong to get jan month check it 
-
-    
-
     useEffect(() => {
         const chart = getProductStockData(products, orders);
         setChartData(chart);
     }, [products, orders]);
+
+    const exportToExcel = () => {
+        if (!products.length) {
+            alert("No products available to export!");
+            return;
+        }
+
+        const dataToExport = products.map((p) => ({
+            ProductID: p._id,
+            Name: p.name,
+            Brand: p.brand,
+            Category: p.category,
+            Collections: p.collections,
+            Gender: p.gender,
+            Material: p.material,
+            Rating: p.rating || 0,
+            Price: p.price,
+            DiscountPrice: p.discountPrice,
+            TotalStock: p.countInStock + (orders.reduce((sum, o) =>
+                sum + o.orderItems.filter(item => item.productId === p._id).reduce((q, item) => q + item.quantity, 0), 0)),
+            RemainingStock: p.countInStock,
+            Colors: p.colors?.join(", ") || "",
+            Sizes: p.sizes?.join(", ") || "",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+        XLSX.writeFile(workbook, "products_data.xlsx");
+    };
 
     if (loading) return <p className="text-center text-lg text-gray-500 mt-10">Loading...</p>;
     if (error) return <p className="text-center text-lg text-red-500 mt-10">Error: {error}</p>;
@@ -76,17 +102,26 @@ function ProductChart() {
     return (
         <div className="flex flex-col items-center justify-center px-4 py-6">
             <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-5xl">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
-                    📦 Products by Stock Status per Brand
-                </h2>
-                <div className="w-full h-[500px] mt-8">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                        📦 Products by Stock Status per Brand
+                    </h2>
+                    <button
+                        onClick={exportToExcel}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-1 pr-2 py-1.5 rounded-lg shadow-md transition duration-200"
+                    >
+                        📥 Download Excel
+                    </button>
+                </div>
+
+                <div className="w-full h-[500px] mt-4">
                     <ResponsiveContainer>
                         <BarChart
                             data={chartData}
                             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                            <XAxis dataKey="brand" tick={false} />
+                            <XAxis dataKey="brand" />
                             <YAxis allowDecimals={false} />
                             <Tooltip
                                 contentStyle={{

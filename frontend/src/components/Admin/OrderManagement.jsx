@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { fetchAllOrders, updateOrderStatus } from '../../redux/slices/adminOrderSlice';
 
 function OrderManagement() {
@@ -28,7 +28,12 @@ function OrderManagement() {
 
   return (
     <div className='max-w-7xl mx-auto p-6'>
-      <h2 className="text-2xl font-bold mb-6">Order Management</h2>
+      <h2 className="text-2xl font-bold mb-2">Order Management</h2>
+      <div className='place-self-end mr-10 mb-4'>
+        <NavLink to="/admin/totalOrders" className='text-blue-500 hover:underline cursor-pointer'>
+          View Orders Charts
+        </NavLink>
+      </div>
       <div className="overflow-x-auto shadow-md sm:rounded-lg">
         <table className="min-w-full text-left text-gray-500">
           <thead className="bg-gray-100 text-xs uppercase text-gray-700">
