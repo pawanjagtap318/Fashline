@@ -1,5 +1,29 @@
 const mongoose = require("mongoose");
 
+const reviewSchema = new mongoose.Schema(
+    {
+        product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+            required: true,
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        order: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Order",
+            required: true,
+        },
+        name: { type: String, required: true }, // user name
+        rating: { type: Number, required: true, min: 1, max: 5 },
+        comment: { type: String, required: true },
+    },
+    { timestamps: true }
+);
+
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,9 +37,6 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
-    },
-    discountPrice: {
-        type: Number,
     },
     countInStock: {
         type: Number,
@@ -101,6 +122,27 @@ const productSchema = new mongoose.Schema({
         height: Number,
     },
     weight: Number,
+    discountPercentage: {
+        type: Number,
+        default: 0
+    },
+    discountPrice: {
+        type: Number,
+        default: null
+    },
+    discountStartDate: {
+        type: Date,
+        default: null
+    },
+    discountEndDate: {
+        type: Date,
+        default: null
+    },
+    isOnDeal: {
+        type: Boolean,
+        default: false
+    },
+    reviews: [reviewSchema],
 },
     { timestamps: true }
 );

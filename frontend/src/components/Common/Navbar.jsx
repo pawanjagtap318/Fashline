@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { IoMdClose } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 import ChatBox from '../AI/ChatBox'
+import Logo from '../../assets/Logo.png';
 
 function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -36,8 +37,12 @@ function Navbar() {
 
         {/* Left - Logo */}
         <div>
-          <Link to='/' className='border-b-6 border-x-2 border-blue-300 border text-3xl bg-gray-200 px-2 py-1 rounded-2xl font-extrabold tracking-wider'>
-            Fashline
+          <Link to='/' className='flex items-center'>
+            <img
+              src={Logo}
+              alt="Fashline Logo"
+              className="h-12 w-auto"
+            />
           </Link>
         </div>
 
@@ -54,6 +59,9 @@ function Navbar() {
           </Link>
           <Link to="/collections/all?category=Bottom Wear" className='text-gray-600 hover:text-black text-sm font-medium uppercase'>
             Bottom Wear
+          </Link>
+          <Link to="/offers" className='text-gray-900 hover:text-black text-sm font-bold uppercase'>
+            🔥 Offers
           </Link>
         </div>
 
@@ -145,6 +153,13 @@ function Navbar() {
               className='block text-gray-600 hover:text-black'
             >
               Bottom Wear
+            </Link>
+            <Link
+              to="/offers"
+              onClick={toggleNavDrawer}
+              className='block text-gray-600 hover:text-black'
+            >
+              🔥 Offers
             </Link>
           </nav>
         </div>

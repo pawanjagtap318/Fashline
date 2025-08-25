@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 const { protect, admin } = require("../middleware/authMiddleware");
+const { addProductReview } = require("../controllers/productController");
 
 
 // @route POST /api/products
@@ -240,10 +241,16 @@ router.get("/", async (req, res) => {
         }
 
         if (search) {
-            query.$or = [
-                { name: { $regex: search, $options: "i" } },
-                { description: { $regex: search, $options: "i" } },
-            ];
+            const keywords = search.split(" ").filter(Boolean);
+
+            query.$and = keywords.map((word) => ({
+                $or: [
+                    { name: { $regex: word, $options: "i" } },
+                    { description: { $regex: word, $options: "i" } },
+                    { brand: { $regex: word, $options: "i" } },
+                    { category: { $regex: word, $options: "i" } },
+                ],
+            }));
         }
 
         // Sort Logic
@@ -350,6 +357,24 @@ router.get("/similar/:id", async (req, res) => {
         res.status(500).send("Server Error");
     }
 });
+
+// @route GET /api/products/all
+// @desc Get all products (no filters)
+// @access Public
+router.get("/all", async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
+});
+
+// @route POST /api/products/:id/reviews
+// @desc Add product review
+// @access Private
+router.post("/:id/reviews", protect, addProductReview);
 
 
 module.exports = router;

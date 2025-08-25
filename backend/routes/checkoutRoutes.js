@@ -4,36 +4,53 @@ const Checkout = require("../models/Checkout");
 const Cart = require("../models/Cart");
 const Order = require("../models/Order");
 const { protect } = require("../middleware/authMiddleware");
+const Product = require("../models/Product");
 
 
 // @route POST /api/checkout
 // @desc Create a new checkout session
 // @access Private
 router.post("/", protect, async (req, res) => {
-    const { checkoutItems, shippingAddress, paymentMethod, totalPrice } = req.body;
+  const { checkoutItems, shippingAddress, paymentMethod } = req.body;
 
-    if(!checkoutItems || checkoutItems.length === 0) {
-        return res.status(400).json({message: "No items in checkout."});
+  if (!checkoutItems || checkoutItems.length === 0) {
+    return res.status(400).json({ message: "No items in checkout." });
+  }
+
+  try {
+    let recalculatedTotal = 0;
+
+    for (const item of checkoutItems) {
+      const product = await Product.findById(item.productId);
+
+      if (!product) {
+        return res.status(404).json({ message: `Product not found: ${item.productId}` });
+      }
+
+      let finalPrice = product.price;
+      if (product.isOnDeal && product.discountEndDate && new Date() <= product.discountEndDate) {
+        finalPrice = product.discountPrice;
+      }
+
+      recalculatedTotal += finalPrice * item.quantity;
     }
 
-    try {
-        // Create a new Checkout session
-        const newCheckout = await Checkout.create({
-            user: req.user._id,
-            checkoutItems: checkoutItems,
-            shippingAddress,
-            paymentMethod,
-            totalPrice,
-            paymentStatus: "Pending",
-            isPaid: false,
-        });
+    const newCheckout = await Checkout.create({
+      user: req.user._id,
+      checkoutItems,
+      shippingAddress,
+      paymentMethod,
+      totalPrice: recalculatedTotal,
+      paymentStatus: "Pending",
+      isPaid: false,
+    });
 
-        console.log(`Checkout created for user: ${req.user._id}`);
-        res.status(201).json(newCheckout);
-    } catch (error) {
-        console.error("Error creating checkout session", error);
-        res.status(500).send("Server Error");
-    }
+    console.log(`Checkout created for user: ${req.user._id}`);
+    res.status(201).json(newCheckout);
+  } catch (error) {
+    console.error("Error creating checkout session", error);
+    res.status(500).send("Server Error");
+  }
 });
 
 
@@ -76,7 +93,6 @@ router.post("/:id/finalize", protect, async (req, res) => {
         if (!checkout) return res.status(404).json({message: "Checkout not found."});
 
         if(checkout.isPaid && !checkout.isFinalized) {
-            // Create final order based on the checkout details
             const finalOrder = await Order.create({
                 user: checkout.user,
                 orderItems: checkout.checkoutItems,

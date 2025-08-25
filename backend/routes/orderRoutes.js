@@ -9,11 +9,10 @@ const { protect } = require("../middleware/authMiddleware");
 // @access Private
 router.get("/my-orders", protect, async (req, res) => {
     try {
-        // Find the orders for the authenticated user
         const orders = await Order.find({ 
             user: req.user._id}).sort({ 
                 createdAt: -1, 
-            });   // Sort by most recent orders
+            });
             res.json(orders);
     } catch (error) {
         console.error(error);
@@ -33,7 +32,6 @@ router.get("/:id", protect, async (req, res) => {
 
         if (!order) return res.status(404).json({message: "Order not Found."});
 
-        // Return the full order details
         res.json(order);
     } catch (error) {
         console.error(error);

@@ -35,13 +35,17 @@ function AdminHomePage() {
 
         // Filter by date range
         if (fromDate) {
+            const from = new Date(fromDate);
+            from.setHours(0, 0, 0, 0);
             filteredOrders = filteredOrders.filter(order =>
-                new Date(order.createdAt) >= new Date(fromDate)
+                new Date(order.createdAt) >= from
             );
         }
         if (toDate) {
+            const to = new Date(toDate);
+            to.setHours(23, 59, 59, 999);
             filteredOrders = filteredOrders.filter(order =>
-                new Date(order.createdAt) <= new Date(toDate)
+                new Date(order.createdAt) <= to
             );
         }
 

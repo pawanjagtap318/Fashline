@@ -20,11 +20,13 @@ import OrderManagement from "./components/Admin/OrderManagement"
 import Revenue from "./components/Charts/revenue";
 import Orders from "./components/Charts/Orders";
 import TopSellingProductsChart from "./components/Charts/TotalProducts/TopSellingProducts";
-import Products from "./components/Charts/Products"
+import Products from "./components/Charts/Products";
+import OffersPage from "./pages/OffersPage";
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute"
+import FeedbackForm from "./pages/FeedBackForm"
 
 
 function App() {
@@ -45,6 +47,8 @@ function App() {
             <Route path="order-confirmation" element={<OrderConfirmationPage />} />
             <Route path="order/:id" element={<OrderDetailsPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
+            <Route path="offers" element={<OffersPage />} />
+            <Route path="/order/:orderId/feedback/:productId" element={<FeedbackForm />} />
           </Route>
 
           <Route

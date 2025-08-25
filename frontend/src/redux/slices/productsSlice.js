@@ -78,12 +78,53 @@ export const fetchSimilarProducts = createAsyncThunk(
     }
 );
 
+// Async Thunk to fetch offers
+export const fetchOffers = createAsyncThunk(
+    "products/fetchOffers",
+    async () => {
+        const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/offers`
+        );
+        return response.data;
+    }
+);
+
+// Async Thunk to fetch ALL products
+export const fetchAllProducts = createAsyncThunk(
+    "products/fetchAll",
+    async () => {
+        const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/products`
+        );
+        return response.data;
+    }
+);
+
+// Async Thunk to add a review
+export const addProductReview = createAsyncThunk(
+  "products/addReview",
+  async ({ productId, reviewData }) => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}/reviews`,
+      reviewData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
+
+
 const productsSlice = createSlice({
     name: "products",
     initialState: {
         products: [],
-        selectedProduct: null,  // Store the details of the single product
+        selectedProduct: null,
         similarProducts: [],
+        offers: [],
         loading: false,
         error: null,
         filters: {
@@ -179,6 +220,42 @@ const productsSlice = createSlice({
             .addCase(fetchSimilarProducts.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+            })
+            .addCase(fetchOffers.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchOffers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.offers = action.payload;
+            })
+            .addCase(fetchOffers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            .addCase(fetchAllProducts.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchAllProducts.fulfilled, (state, action) => {
+                state.loading = false;
+                state.products = Array.isArray(action.payload)
+                    ? action.payload
+                    : [];
+            })
+            .addCase(fetchAllProducts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            .addCase(addProductReview.fulfilled, (state, action) => {
+                if (state.selectedProduct) {
+                    state.selectedProduct.reviews.push(action.payload.review);
+                    state.selectedProduct.numOfReviews = state.selectedProduct.reviews.length;
+                    state.selectedProduct.rating = state.selectedProduct.reviews.reduce(
+                        (acc, r) => acc + r.rating,
+                        0
+                    ) / state.selectedProduct.reviews.length;
+                }
             });
     },
 });

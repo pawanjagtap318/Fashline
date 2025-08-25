@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserOrders } from '../redux/slices/orderSlice';
@@ -65,7 +65,7 @@ function MyOrdersPage() {
                                 {order.orderItems.length}
                             </td>
                             <td className="py-2 px-2 sm:py-4 sm:px-4">
-                                {order.totalPrice}
+                                {order.totalPrice.toFixed(2)}
                             </td>
                             <td className="py-2 px-2 sm:py-4 sm:px-4">
                                 {order && order.status !== "Cancelled" ? (

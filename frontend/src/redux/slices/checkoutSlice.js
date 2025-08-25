@@ -42,7 +42,7 @@ const checkoutSlice = createSlice({
         })
         .addCase(createCheckout.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.payload.message;
+            state.error = action.payload?.message || "Checkout failed";
         });
     },
 });

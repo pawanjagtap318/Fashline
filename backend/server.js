@@ -13,6 +13,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const productAdminRoutes = require("./routes/productAdminRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const offersRoutes = require("./routes/offersRoutes");
 
 
 const app = express();
@@ -38,6 +39,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api", subscribeRoute);
 app.use("/api/chat", chatRoutes);
+app.use("/api/offers", offersRoutes);
 
 // Admin
 app.use("/api/admin/users", adminRoutes);

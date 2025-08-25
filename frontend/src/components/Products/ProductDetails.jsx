@@ -129,12 +129,39 @@ function ProductDetails({ productId }) {
                             <h1 className='text-2xl md:text-3xl font-semibold mb-2'>
                                 {selectedProduct.name}
                             </h1>
-                            <p className='text-lg text-gray-600 mb-1 line-through'>
-                                {selectedProduct.originalPrice && `$${selectedProduct.originalPrice}`}
-                            </p>
-                            <p className="text-xl text-gray-500 mb-2">
-                                ${selectedProduct.price}
-                            </p>
+                            {/* Price Section */}
+                            <div className="mb-4">
+                                {selectedProduct.isOnDeal ? (
+                                    <div>
+                                        {/* Original Price (crossed out) */}
+                                        <p className="text-lg text-gray-600 line-through mb-1">
+                                            ${selectedProduct.price}
+                                        </p>
+
+                                        {/* Discount Price */}
+                                        <p className="text-2xl text-green-600 font-bold mb-1">
+                                            ${selectedProduct.discountPrice?.toFixed(2)}
+                                        </p>
+
+                                        {/* Discount Percentage */}
+                                        <p className="text-red-500 font-medium">
+                                            -{selectedProduct.discountPercentage}%
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {/* Normal Price */}
+                                        {selectedProduct.originalPrice && (
+                                            <p className="text-lg text-gray-600 line-through mb-1">
+                                                ${selectedProduct.originalPrice}
+                                            </p>
+                                        )}
+                                        <p className="text-xl text-green-500 mb-2">
+                                            ${selectedProduct.price}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                             <p className="text-gray-600 mb-4">
                                 {selectedProduct.description}
                             </p>
