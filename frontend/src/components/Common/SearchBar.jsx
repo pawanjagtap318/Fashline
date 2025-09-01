@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HiMagnifyingGlass, HiMiniXMark, HiMicrophone } from 'react-icons/hi2';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -10,15 +10,21 @@ function SearchBar() {
   const [listening, setListening] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const inputRef = useRef(null);
 
-  // Check for browser speech recognition support
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 
   if (recognition) {
-    recognition.continuous = false; // stop after one sentence
-    recognition.interimResults = false; // only final results
+    recognition.continuous = false;
+    recognition.interimResults = false;
     recognition.lang = "en-US";
   }
 
@@ -71,29 +77,32 @@ function SearchBar() {
 
   return (
     <div
-      className={`flex items-center justify-center w-full transition-all duration-300 ${
-        isOpen
-          ? "absolute top-0 left-0 w-full bg-white h-28 z-50"
-          : "w-auto"
-      }`}
+      className={`flex items-center justify-center w-full transition-all duration-500 ${isOpen
+        ? "fixed top-0 left-0 w-full h-28 bg-white z-50 shadow-lg"
+        : "w-auto"
+        }`}
     >
       {isOpen ? (
         <form
           onSubmit={handleSearch}
           className="relative flex items-center justify-center w-full"
         >
-          <div className="relative w-1/2">
+          {/* Search Input Box */}
+          <div className="relative w-11/12 sm:w-3/4 md:w-1/2">
             <input
               type="text"
-              placeholder="Search"
+              ref={inputRef}
+              placeholder="Search for products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-100 px-4 py-2 pl-2 pr-12 rounded-lg focus:outline-none w-full placeholder:text-gray-700"
+              className="bg-gray-100 px-5 py-3 rounded-2xl shadow-md w-full 
+              focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500 text-gray-800"
             />
+
             {/* Search Icon */}
             <button
               type="submit"
-              className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+              className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-indigo-600 transition"
             >
               <HiMagnifyingGlass className="h-6 w-6" />
             </button>
@@ -102,9 +111,9 @@ function SearchBar() {
             <button
               type="button"
               onClick={handleVoiceSearch}
-              className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${
-                listening ? "text-red-500" : "text-gray-600"
-              } hover:text-gray-800`}
+              className={`absolute right-3 top-1/2 transform -translate-y-1/2 
+                ${listening ? "text-red-500 animate-pulse" : "text-gray-600 hover:text-indigo-600"} 
+                transition`}
             >
               <HiMicrophone className="h-6 w-6" />
             </button>
@@ -114,14 +123,17 @@ function SearchBar() {
           <button
             type="button"
             onClick={handleSearchToggle}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-red-500 transition"
           >
-            <HiMiniXMark className="h-6 w-6" />
+            <HiMiniXMark className="h-7 w-7" />
           </button>
         </form>
       ) : (
-        <button onClick={handleSearchToggle}>
-          <HiMagnifyingGlass className="h-6 w-6" />
+        <button
+          onClick={handleSearchToggle}
+          className="p-2 rounded-full hover:bg-gray-100 transition"
+        >
+          <HiMagnifyingGlass className="h-6 w-6 text-gray-700" />
         </button>
       )}
     </div>

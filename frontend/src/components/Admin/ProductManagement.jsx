@@ -53,71 +53,76 @@ function ProductManagement() {
         setSortConfig({ key, direction });
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (loading) return <p className="text-center text-lg">Loading...</p>;
+    if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
     return (
         <div className="max-w-7xl mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-2">Product Management</h2>
-            <div className="place-self-end mr-10 mb-4">
-                <NavLink to="/admin/allProducts" className="text-blue-500 hover:underline cursor-pointer">
-                    View Products Charts
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-extrabold text-gray-800">🛒 Product Management</h2>
+                <NavLink
+                    to="/admin/allProducts"
+                    className="text-blue-600 hover:underline font-medium"
+                >
+                    View Products Charts →
                 </NavLink>
             </div>
-            <div className="overflow-x-auto shadow-md sm:rounded-lg">
-                <table className="min-w-full text-left text-gray-500">
-                    <thead className="bg-gray-100 text-xs uppercase text-gray-700">
+
+            {/* Table */}
+            <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
+                <table className="min-w-full text-sm text-left text-gray-600">
+                    <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
                         <tr>
-                            <th
-                                className="py-3 px-4 cursor-pointer"
-                                onClick={() => requestSort("name")}
-                            >
-                                Name {sortConfig.key === "name" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                            </th>
-                            <th
-                                className="py-3 px-4 cursor-pointer"
-                                onClick={() => requestSort("countInStock")}
-                            >
-                                Stock {sortConfig.key === "countInStock" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                            </th>
-                            <th
-                                className="py-3 px-4 cursor-pointer"
-                                onClick={() => requestSort("price")}
-                            >
-                                Price {sortConfig.key === "price" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                            </th>
-                            <th
-                                className="py-3 px-4 cursor-pointer"
-                                onClick={() => requestSort("sku")}
-                            >
-                                SKU {sortConfig.key === "sku" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                            </th>
+                            {["name", "countInStock", "price", "sku"].map((key) => (
+                                <th
+                                    key={key}
+                                    className="py-3 px-4 cursor-pointer select-none"
+                                    onClick={() => requestSort(key)}
+                                >
+                                    {key === "name" && "Name"}
+                                    {key === "countInStock" && "Stock"}
+                                    {key === "price" && "Price"}
+                                    {key === "sku" && "SKU"}
+                                    {sortConfig.key === key && (
+                                        <span className="ml-1">{sortConfig.direction === "asc" ? "▲" : "▼"}</span>
+                                    )}
+                                </th>
+                            ))}
                             <th className="py-3 px-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {sortedProducts.length > 0 ? (
-                            sortedProducts.map((product) => (
+                            sortedProducts.map((product, idx) => (
                                 <tr
                                     key={product._id}
-                                    className="border-b hover:bg-gray-50 cursor-pointer"
+                                    className={`border-b ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100 transition`}
                                 >
-                                    <td className="p-4 font-medium text-gray-900 whitespace-nowrap">
+                                    <td className="p-4 font-semibold text-gray-900 whitespace-nowrap">
                                         {product.name}
                                     </td>
-                                    <td className="p-4">{product.countInStock}</td>
-                                    <td className="p-4">${product.price}</td>
+                                    <td
+                                        className={`p-4 font-medium ${product.countInStock > 10
+                                                ? "text-green-600"
+                                                : product.countInStock > 0
+                                                    ? "text-yellow-600"
+                                                    : "text-red-600"
+                                            }`}
+                                    >
+                                        {product.countInStock}
+                                    </td>
+                                    <td className="p-4 font-medium text-blue-600">${product.price}</td>
                                     <td className="p-4">{product.sku}</td>
-                                    <td className="p-4">
+                                    <td className="p-4 flex flex-wrap gap-2">
                                         <Link
                                             to={`/admin/products/${product._id}/edit`}
-                                            className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600"
+                                            className="bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-yellow-600 transition"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(product._id)}
-                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700"
+                                            className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-600 transition"
                                         >
                                             Delete
                                         </button>
@@ -126,8 +131,8 @@ function ProductManagement() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="p-4 text-center text-gray-500">
-                                    No Products Found.
+                                <td colSpan={5} className="p-6 text-center text-gray-500">
+                                    No Products Found 🚫
                                 </td>
                             </tr>
                         )}

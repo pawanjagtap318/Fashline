@@ -48,15 +48,12 @@ function TotalOrders() {
   };
 
   const data = getStatusData(orders);
-
   const totalCount = data.reduce((sum, item) => sum + item.count, 0);
-  const pieData = totalCount === 0
-    ? [{ name: "No Data", count: 1 }]
-    : data;
+  const pieData = totalCount === 0 ? [{ name: "No Data", count: 1 }] : data;
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[70vh] text-lg font-semibold text-gray-600">
+      <div className="flex items-center justify-center h-[70vh] text-lg font-semibold text-gray-600 animate-pulse">
         Loading Orders...
       </div>
     );
@@ -65,38 +62,36 @@ function TotalOrders() {
   if (error) {
     return (
       <div className="flex items-center justify-center h-[70vh] text-lg font-semibold text-red-600">
-        Error: {error}
+        ❌ Error: {error}
       </div>
     );
   }
 
   return (
     <div className="flex flex-col items-center justify-center px-4 py-6">
-      <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-4xl">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
-          📊 Orders Status
+      <div className="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 shadow-2xl rounded-2xl p-6 w-full max-w-5xl transition-transform transform hover:scale-[1.01]">
+        <h2 className="text-3xl font-extrabold text-center text-black mb-6 tracking-wide">
+          📊 Orders Status Overview
         </h2>
-        <div>
-          <div style={{ marginBottom: '20px' }}>
-            <label htmlFor="year-select" style={{ marginRight: '10px' }}>Select Year:</label>
-            <select
-              id="year-select"
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-              style={{
-                padding: '8px 12px',
-                borderRadius: '5px',
-                border: '1px solid #ccc',
-                fontSize: '1em'
-              }}
-            >
-              {[2024, 2025, 2026, 2027].map((year) => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
+
+        {/* Year Selector */}
+        <div className="flex justify-center mb-6">
+          <select
+            id="year-select"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none text-gray-700 font-medium"
+          >
+            {[2024, 2025, 2026, 2027, 2028].map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="w-full h-[400px]">
+
+        {/* Pie Chart */}
+        <div className="w-full h-[400px] flex items-center justify-center">
           <ResponsiveContainer>
             <PieChart>
               <Pie
@@ -105,14 +100,13 @@ function TotalOrders() {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={120}
+                outerRadius={130}
                 fill="#8884d8"
-                // label
                 animationBegin={200}
-                animationDuration={1000}
+                animationDuration={1200}
                 isAnimationActive={true}
               >
-                {data.map((entry, index) => (
+                {pieData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={
@@ -129,13 +123,20 @@ function TotalOrders() {
                 contentStyle={{
                   backgroundColor: "#f9fafb",
                   border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
+                  borderRadius: "10px",
+                  boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
                 }}
               />
-              <Legend verticalAlign="bottom" height={36} />
+              <Legend verticalAlign="bottom" height={40} />
             </PieChart>
           </ResponsiveContainer>
         </div>
+
+        {totalCount === 0 && (
+          <p className="text-center text-gray-500 font-medium mt-4">
+            📉 No order data available for {selectedYear}.
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoMdClose } from 'react-icons/io';
 import CartContent from '../Cart/CartContent';
 import { useNavigate } from 'react-router-dom';
@@ -20,46 +19,59 @@ function CartDrawer({ drawerOpen, togglCartDrawer }) {
   }
 
   return (
-    <div
-      className={`fixed top-0 right-0 w-3/4 sm:w-1/2 md:w-[30rem] h-full bg-white shadow-lg 
-        transform transition-transform duration-300 flex flex-col z-50 ${drawerOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-    >
+    <>
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-opacity-40 backdrop-blur-xs transition-opacity duration-300 z-40 ${drawerOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+        onClick={togglCartDrawer}
+      />
 
-      {/* Close Button */}
-      <div className='flex justify-end p-4'>
-        <button onClick={togglCartDrawer}>
-          <IoMdClose className='w-6 h-6 text-gray-600' />
-        </button>
-      </div>
+      {/* Drawer */}
+      <div
+        className={`fixed top-0 right-0 h-full w-full sm:w-4/5 md:w-[28rem] bg-white shadow-2xl rounded-l-2xl
+        transform transition-transform duration-300 ease-in-out flex flex-col z-50 
+        ${drawerOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
+        {/* Close Button */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h2 className="text-lg font-bold text-gray-800">Shopping Cart</h2>
+          <button
+            onClick={togglCartDrawer}
+            className="p-2 rounded-full hover:bg-gray-100 transition"
+          >
+            <IoMdClose className="w-6 h-6 text-gray-600" />
+          </button>
+        </div>
 
-      {/* Card contents with scrollable area */}
-      <div className='flex-grow p-4 overflow-y-auto'>
-        <h2 className='text-xl font-semibold mb-4'>Your Cart</h2>
-        {cart && cart?.products?.length > 0 ? (
-          <CartContent cart={cart} userId={userId} guestId={guestId} />
-        ) : (
-          <p>Your cart is empty.</p>
-        )}
-      </div>
+        {/* Cart contents with scrollable area */}
+        <div className="flex-grow p-4 overflow-y-auto">
+          {cart && cart?.products?.length > 0 ? (
+            <CartContent cart={cart} userId={userId} guestId={guestId} />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <p className="text-lg font-medium">🛒 Your cart is empty</p>
+              <p className="text-sm">Start shopping to add items here.</p>
+            </div>
+          )}
+        </div>
 
-      {/* Checkout button fixed at the bottom */}
-      <div className='p-4 bg-white sticky bottom-0'>
+        {/* Checkout button fixed at the bottom */}
         {cart && cart?.products?.length > 0 && (
-          <>
+          <div className="p-4 border-t border-gray-200 bg-white">
             <button
               onClick={handleCheckout}
-              className='w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition'>
-              Checkout
+              className="w-full bg-gradient-to-r from-black via-gray-800 to-black text-white py-3 rounded-xl font-semibold shadow-md hover:scale-[1.02] active:scale-95 transition-transform"
+            >
+              Proceed to Checkout
             </button>
-            <p className='text-sm tracking-tighter text-gray-500 mt-2 text-center'>
-              Shipping, taxes and discount codes calculated at checkout.
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              Shipping, taxes & discounts calculated at checkout.
             </p>
-          </>
+          </div>
         )}
-
       </div>
-    </div>
+    </>
   )
 }
 

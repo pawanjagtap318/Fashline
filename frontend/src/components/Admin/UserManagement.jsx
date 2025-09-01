@@ -12,13 +12,13 @@ function UserManagement() {
     const { users, loading, error } = useSelector((state) => state.admin);
 
     useEffect(() => {
-        if(user && user.role !== "admin") {
+        if (user && user.role !== "admin") {
             navigate("/");
         }
     }, [user, navigate]);
 
     useEffect(() => {
-        if(user && user.role === "admin") {
+        if (user && user.role === "admin") {
             dispatch(fetchUsers());
         }
     }, [dispatch, user]);
@@ -27,7 +27,7 @@ function UserManagement() {
         name: "",
         email: '',
         password: "",
-        role: "customer",   // Default role
+        role: "customer",
     });
 
     const handleChange = (e) => {
@@ -41,7 +41,6 @@ function UserManagement() {
         e.preventDefault();
         dispatch(addUser(formData));
 
-        // Reset the form after Submission
         setFormData({
             name: "",
             email: "",
@@ -76,80 +75,90 @@ function UserManagement() {
     };
 
     return (
-        <div className='max-w-7xl mx-auto p-6'>
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">User Management</h2>
+        <div className="max-w-7xl mx-auto p-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-3xl font-extrabold text-gray-800">
+                    👥 User Management
+                </h2>
                 <button
                     onClick={exportToExcel}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                    className="bg-green-500 text-white px-5 py-2 rounded-lg shadow hover:bg-green-600 transition"
                 >
-                    📥 Download Excel
+                    📥 Export Excel
                 </button>
             </div>
 
-            {loading && <p>Loading...</p>}
-            {error && <p>Error: {error}</p>}
+            {loading && <p className="text-blue-600">Loading users...</p>}
+            {error && <p className="text-red-600">Error: {error}</p>}
 
-            {/* Add New User Form */}
-            <div className="p-6 rounded-lg mb-6 bg-gray-50 shadow">
-                <h3 className="text-lg font-bold mb-4">Add New User</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Name</label>
+            {/* Add User Form */}
+            <div className="p-6 rounded-xl mb-8 bg-white shadow-lg border">
+                <h3 className="text-xl font-semibold mb-4 text-gray-700">
+                    ➕ Add New User
+                </h3>
+                <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <label className="block text-gray-700 font-medium mb-1">Name</label>
                         <input
                             type="text"
-                            name='name'
+                            name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className='w-full p-2 border rounded'
+                            className="w-full p-2 border rounded focus:ring focus:ring-green-200"
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Email</label>
+                    <div>
+                        <label className="block text-gray-700 font-medium mb-1">Email</label>
                         <input
                             type="email"
-                            name='email'
+                            name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className='w-full p-2 border rounded'
+                            className="w-full p-2 border rounded focus:ring focus:ring-green-200"
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Password</label>
+                    <div>
+                        <label className="block text-gray-700 font-medium mb-1">Password</label>
                         <input
                             type="password"
-                            name='password'
+                            name="password"
                             value={formData.password}
                             onChange={handleChange}
-                            className='w-full p-2 border rounded'
+                            className="w-full p-2 border rounded focus:ring focus:ring-green-200"
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Role</label>
+                    <div>
+                        <label className="block text-gray-700 font-medium mb-1">Role</label>
                         <select
-                            name='role'
+                            name="role"
                             value={formData.role}
                             onChange={handleChange}
-                            className='w-full p-2 border rounded'
+                            className="w-full p-2 border rounded bg-white focus:ring focus:ring-green-200"
                             required
                         >
                             <option value="customer">Customer</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
-                    <button type='submit' className='bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600'>
-                        Add User
-                    </button>
+                    <div className="md:col-span-2">
+                        <button
+                            type="submit"
+                            className="w-full md:w-auto bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition shadow"
+                        >
+                            Add User
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            {/* User List Management */}
-            <div className="overflow-x-auto shadow-md sm:rounded-lg">
-                <table className="min-w-full text-left text-gray-500">
-                    <thead className="bg-gray-100 text-xs uppercase text-gray-700">
+            {/* User Table */}
+            <div className="overflow-x-auto bg-white shadow-lg rounded-xl border">
+                <table className="min-w-full text-sm text-left text-gray-600">
+                    <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
                         <tr>
                             <th className="py-3 px-4">Name</th>
                             <th className="py-3 px-4">Email</th>
@@ -158,30 +167,47 @@ function UserManagement() {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => (
-                            <tr key={user._id} className="border-b hover:bg-gray-50">
-                                <td className="p-4 font-medium text-gray-900 whitespace-nowrap">{user.name}</td>
-                                <td className="p-4">{user.email}</td>
-                                <td className="p-4">
-                                    <select
-                                        value={user.role}
-                                        onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                                        className='p-2 border rounded'
-                                    >
-                                        <option value="customer">Customer</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                </td>
-                                <td className="p-4">
-                                    <button
-                                        onClick={() => handleDeletedUser(user._id)}
-                                        className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'
-                                    >
-                                        Delete
-                                    </button>
+                        {users.length > 0 ? (
+                            users.map((u, idx) => (
+                                <tr
+                                    key={u._id}
+                                    className={`border-b ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                                        } hover:bg-gray-100 transition`}
+                                >
+                                    <td className="p-4 font-semibold text-gray-900 whitespace-nowrap">
+                                        {u.name}
+                                    </td>
+                                    <td className="p-4">{u.email}</td>
+                                    <td className="p-4">
+                                        <select
+                                            value={u.role}
+                                            onChange={(e) => handleRoleChange(u._id, e.target.value)}
+                                            className="p-2 border rounded bg-white focus:ring focus:ring-green-200"
+                                        >
+                                            <option value="customer">Customer</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </td>
+                                    <td className="p-4">
+                                        <button
+                                            onClick={() => handleDeletedUser(u._id)}
+                                            className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 transition shadow text-sm"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td
+                                    colSpan={4}
+                                    className="text-center p-6 text-gray-500 italic"
+                                >
+                                    No users found 🚫
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>

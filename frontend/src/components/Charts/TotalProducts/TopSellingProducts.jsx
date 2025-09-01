@@ -6,7 +6,6 @@ import {
     Tooltip,
     ResponsiveContainer,
     CartesianGrid,
-    LabelList,
     Legend
 } from 'recharts';
 import { fetchAdminProducts } from '../../../redux/slices/adminProductSlice';
@@ -14,8 +13,9 @@ import { fetchAllOrders } from '../../../redux/slices/adminOrderSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { motion } from "framer-motion";
 
-const COLORS = "#38bdf8";
+const COLORS = "url(#barGradient)";
 
 const TopSellingProductsChart = () => {
     const { user } = useSelector((state) => state.auth);
@@ -71,13 +71,8 @@ const TopSellingProductsChart = () => {
         setTopProducts(chartData);
     }, [products, orders, selectedYear]);
 
-    const DEFAULT_COLOR = "#d1d5db"; // gray
+    const DEFAULT_COLOR = "#d1d5db";
     const totalCount = topProducts.reduce((sum, p) => sum + p.totalSold, 0);
-
-    const chartData =
-        totalCount === 0
-            ? [{ name: "No Data", totalSold: 1 }]
-            : topProducts;
 
     if (loading) return <p className="text-center text-lg text-gray-500 mt-10">Loading...</p>;
     if (error) return <p className="text-center text-lg text-red-500 mt-10">Error: {error}</p>;
@@ -85,76 +80,80 @@ const TopSellingProductsChart = () => {
 
     return (
         <div className="flex flex-col items-center justify-center px-4 py-6">
-            <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-5xl">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white/80 backdrop-blur-lg border border-gray-200 shadow-2xl rounded-2xl p-6 w-full max-w-6xl"
+            >
+                {/* Title */}
+                <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-4">
                     🏆 Top 10 Products by Sales
                 </h2>
-                <div className='mt-8'>
-                    <div style={{ marginBottom: '20px' }}>
-                        <label htmlFor="year-select" style={{ marginRight: '10px' }}>Select Year:</label>
-                        <select
-                            id="year-select"
-                            value={selectedYear}
-                            onChange={(e) => setSelectedYear(Number(e.target.value))}
-                            style={{
-                                padding: '8px 12px',
-                                borderRadius: '5px',
-                                border: '1px solid #ccc',
-                                fontSize: '1em'
-                            }}
-                        >
-                            {[2024, 2025, 2026, 2027].map((year) => (
-                                <option key={year} value={year}>{year}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-                <div className="w-full h-[500px]">
-                    <div
-                        key={selectedYear}
-                        className="animate-fadeIn h-full"
+
+                {/* Year Selector */}
+                <div className="flex justify-center mb-6">
+                    <select
+                        id="year-select"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(Number(e.target.value))}
+                        className="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 text-white font-semibold shadow-md hover:scale-105 transition-transform"
                     >
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                layout="vertical"
-                                data={topProducts}
-                                margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                                <XAxis type="number" allowDecimals={false} />
-                                <YAxis dataKey="name" type="category" tick={false} width={0} />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: "#fcfcfd",
-                                        border: "1px solid #e5e7eb",
-                                        borderRadius: "8px",
-                                    }}
-                                />
-                                <Legend />
-                                {totalCount === 0 && (
-                                    <text
-                                        x="50%"
-                                        y="50%"
-                                        textAnchor="middle"
-                                        dominantBaseline="middle"
-                                        fill="#6b7280"
-                                        fontSize={16}
-                                    >
-                                        No data available
-                                    </text>
-                                )}
-                                <Bar
-                                    dataKey="totalSold"
-                                    name="Total Sold"
-                                    fill={totalCount === 0 ? DEFAULT_COLOR : COLORS}
-                                    radius={[10, 10, 10, 10]}
-                                    barSize={25}
-                                />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+                        {[2024, 2025, 2026, 2027, 2028].map((year) => (
+                            <option key={year} value={year} className="text-black">
+                                {year}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-            </div>
+
+                {/* Chart */}
+                <div className="w-full h-[500px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            layout="vertical"
+                            data={
+                                totalCount === 0
+                                    ? [{ name: "No Data", totalSold: 1 }]
+                                    : topProducts
+                            }
+                            margin={{ top: 20, right: 40, left: 50, bottom: 20 }}
+                        >
+                            <defs>
+                                <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stopColor="#38bdf8" />
+                                    <stop offset="100%" stopColor="#0ea5e9" />
+                                </linearGradient>
+                            </defs>
+
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                            <XAxis type="number" allowDecimals={false} />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                tick={{ fontSize: 14, fill: "#374151" }}
+                                width={150}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: "white",
+                                    border: "1px solid #e5e7eb",
+                                    borderRadius: "12px",
+                                    padding: "10px",
+                                }}
+                            />
+                            <Legend />
+                            <Bar
+                                dataKey="totalSold"
+                                name="Total Sold"
+                                fill={totalCount === 0 ? DEFAULT_COLOR : COLORS}
+                                radius={[8, 8, 8, 8]}
+                                barSize={30}
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </motion.div>
         </div>
     );
 };

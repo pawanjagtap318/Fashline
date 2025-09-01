@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { fetchAllOrders } from "../../../redux/slices/adminOrderSlice";
 import * as XLSX from "xlsx";
+import { Download } from "lucide-react";
 
 
 const COLORS = {
@@ -96,25 +97,37 @@ function ProductChart() {
         XLSX.writeFile(workbook, "products_data.xlsx");
     };
 
-    if (loading) return <p className="text-center text-lg text-gray-500 mt-10">Loading...</p>;
-    if (error) return <p className="text-center text-lg text-red-500 mt-10">Error: {error}</p>;
+    if (loading)
+        return (
+            <p className="text-center text-lg text-gray-500 mt-10 animate-pulse">
+                Loading Products...
+            </p>
+        );
+    if (error)
+        return (
+            <p className="text-center text-lg text-red-500 mt-10">
+                ❌ Error: {error}
+            </p>
+        );
 
     return (
         <div className="flex flex-col items-center justify-center px-4 py-6">
-            <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-5xl">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold text-gray-800">
-                        📦 Products by Stock Status per Brand
+            <div className="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 shadow-2xl rounded-2xl p-6 w-full max-w-6xl transition-transform transform hover:scale-[1.01]">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h2 className="text-3xl font-extrabold text-indigo-700 text-center md:text-left">
+                        📦 Products Stock Overview
                     </h2>
                     <button
                         onClick={exportToExcel}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-1 pr-2 py-1.5 rounded-lg shadow-md transition duration-200"
+                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
                     >
-                        📥 Download Excel
+                        <Download size={18} /> Download Excel
                     </button>
                 </div>
 
-                <div className="w-full h-[500px] mt-4">
+                {/* Chart */}
+                <div className="w-full h-[500px]">
                     <ResponsiveContainer>
                         <BarChart
                             data={chartData}
@@ -127,13 +140,29 @@ function ProductChart() {
                                 contentStyle={{
                                     backgroundColor: "#f9fafb",
                                     border: "1px solid #e5e7eb",
-                                    borderRadius: "8px",
+                                    borderRadius: "10px",
+                                    boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
                                 }}
                             />
-                            <Legend />
-                            <Bar dataKey="totalStock" stackId="a" fill={COLORS.totalStock} name="Total Stock" />
-                            <Bar dataKey="inStock" stackId="a" fill={COLORS.inStock} name="In Stock" />
-                            <Bar dataKey="sold" stackId="a" fill={COLORS.sold} name="Sold" />
+                            <Legend verticalAlign="top" />
+                            <Bar
+                                dataKey="totalStock"
+                                fill={COLORS.totalStock}
+                                name="Total Stock"
+                                radius={[6, 6, 0, 0]}
+                            />
+                            <Bar
+                                dataKey="inStock"
+                                fill={COLORS.inStock}
+                                name="In Stock"
+                                radius={[6, 6, 0, 0]}
+                            />
+                            <Bar
+                                dataKey="sold"
+                                fill={COLORS.sold}
+                                name="Sold"
+                                radius={[6, 6, 0, 0]}
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

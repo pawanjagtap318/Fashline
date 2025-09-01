@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 function CartContent({ cart, userId, guestId }) {
   const dispatch = useDispatch();
-  const { products, loading, error } = useSelector(
+  const { products } = useSelector(
     (state) => state.products
   );
 
@@ -48,27 +48,32 @@ function CartContent({ cart, userId, guestId }) {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       {cart.products.map((cartProduct, index) => {
-        const fullProduct = products.find((p) => p._id === cartProduct.productId);
+        const fullProduct = products.find(
+          (p) => p._id === cartProduct.productId
+        );
         return (
           <div
             key={index}
-            className='flex items-start justify-between py-4 border-b'
+            className="flex flex-col sm:flex-row sm:items-start justify-between p-4 bg-white border rounded-2xl shadow-md hover:shadow-lg transition"
           >
-            <div className='flex items-start'>
+            {/* Left: Image + details */}
+            <div className="flex items-start sm:w-2/3">
               <img
                 src={cartProduct.image}
                 alt={cartProduct.name}
-                className='w-24 h-24 object-cover mr-4 rounded'
+                className="w-24 h-24 object-cover mr-4 rounded-xl shadow-sm"
               />
               <div>
-                <h3>{cartProduct.name}</h3>
-                <p className='text-sm text-gray-500'>
-                  size: {cartProduct.size} | color: {cartProduct.color}
+                <h3 className="font-semibold text-gray-800">{cartProduct.name}</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Size: <span className="font-medium">{cartProduct.size}</span> | Color:{" "}
+                  <span className="font-medium">{cartProduct.color}</span>
                 </p>
+
                 {/* Quantity controls */}
-                <div className='flex items-center mt-2'>
+                <div className="flex items-center mt-3 space-x-3">
                   <button
                     onClick={() =>
                       handleAddToCart(
@@ -76,14 +81,16 @@ function CartContent({ cart, userId, guestId }) {
                         -1,
                         cartProduct.quantity,
                         cartProduct.size,
-                        cartProduct.color,
+                        cartProduct.color
                       )
                     }
-                    className='border rounded px-2 py-1 text-xl font-medium'
+                    className="w-8 h-8 flex items-center justify-center border rounded-full text-lg font-bold hover:bg-gray-100"
                   >
                     -
                   </button>
-                  <span className='mx-4'>{cartProduct.quantity}</span>
+                  <span className="font-medium text-gray-700">
+                    {cartProduct.quantity}
+                  </span>
                   <button
                     onClick={() =>
                       handleAddToCart(
@@ -91,10 +98,10 @@ function CartContent({ cart, userId, guestId }) {
                         1,
                         cartProduct.quantity,
                         cartProduct.size,
-                        cartProduct.color,
+                        cartProduct.color
                       )
                     }
-                    className='border rounded px-2 py-1 text-xl font-medium'
+                    className="w-8 h-8 flex items-center justify-center border rounded-full text-lg font-bold hover:bg-gray-100"
                   >
                     +
                   </button>
@@ -102,53 +109,58 @@ function CartContent({ cart, userId, guestId }) {
               </div>
             </div>
 
-            {/* Price Section */}
-            <div className="text-right">
+            {/* Right: Price + Remove */}
+            <div className="flex flex-col items-end sm:w-1/3 mt-4 sm:mt-0">
               {fullProduct?.isOnDeal ? (
                 <>
-                  {/* Line total with deal price */}
-                  <p className="font-medium mt-2 text-green-600">
+                  <p className="font-semibold text-green-600 text-lg">
                     ${(Number(fullProduct.discountPrice) * cartProduct.quantity).toFixed(2)}
                   </p>
-                  <p className="text-sm line-through text-gray-500">
+                  <p className="text-sm line-through text-gray-400">
                     ${(fullProduct.price * cartProduct.quantity).toFixed(2)}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    (${Number(fullProduct.discountPrice).toFixed(2)} each)
-                    <span className="ml-2 text-red-500 text-xs">
-                      -{fullProduct.discountPercentage}%
-                    </span>
-                  </p>
+                  <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded mt-1">
+                    Save {fullProduct.discountPercentage}%
+                  </span>
                 </>
               ) : (
                 <>
-                  {/* Line total with regular price */}
-                  <p className="font-medium mt-2 text-green-600">
-                    ${(Number(fullProduct?.price ?? cartProduct.price) * cartProduct.quantity).toFixed(2)}
+                  <p className="font-semibold text-green-600 text-lg">
+                    $
+                    {(
+                      Number(fullProduct?.price ?? cartProduct.price) *
+                      cartProduct.quantity
+                    ).toFixed(2)}
                   </p>
                   <p className="text-sm text-gray-500">
                     (${Number(fullProduct?.price ?? cartProduct.price).toFixed(2)} each)
                   </p>
                 </>
               )}
+
               <button
                 onClick={() =>
                   handleRemoveFromCart(
                     cartProduct.productId,
                     cartProduct.size,
-                    cartProduct.color,
+                    cartProduct.color
                   )
                 }
+                className="mt-3 hover:scale-110 transition"
               >
-                <RiDeleteBin3Line className="place-self-end mt-4 mr-4 h-6 w-6 text-red-600" />
+                <RiDeleteBin3Line className="h-6 w-6 text-red-500 hover:text-red-700" />
               </button>
             </div>
           </div>
         );
       })}
-      <div className="mt-6 flex justify-between items-center pt-4">
-        <h2 className="text-xl font-semibold">Your Cart Total</h2>
-        <p className="text-2xl font-bold text-green-600">
+
+      {/* Cart Total */}
+      <div className="mt-8 flex flex-col sm:flex-row justify-between items-center bg-gray-50 p-4 rounded-xl shadow">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-700">
+          Your Cart Total
+        </h2>
+        <p className="text-2xl font-bold text-green-600 mt-2 sm:mt-0">
           ${calculateCartTotal().toFixed(2)}
         </p>
       </div>

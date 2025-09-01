@@ -27,6 +27,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute"
 import FeedbackForm from "./pages/FeedBackForm"
+import ScrollToTop from "./components/Common/ScrollToTop"
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+        <ScrollToTop />
         <Toaster position="top-right" />
         <Routes>
           <Route path="/" element={<UserLayout />}>
@@ -60,15 +62,15 @@ function App() {
             }
           >
             <Route index element={<AdminHomePage />} />
-              <Route path="revenue" element={<Revenue />} />
-              <Route path="totalOrders" element={<Orders />} />
-              <Route path="allProducts" element={<Products />} />
-              <Route path="topSellingProducts" element={<TopSellingProductsChart />} />
-              <Route path="users" element={<UserManagement />} />
-              <Route path="products" element={<ProductManagement />} />
-              <Route path="products/:id/edit" element={<EditProductPage />} />
-              <Route path="orders" element={<OrderManagement />} />
-            </Route>
+            <Route path="revenue" element={<Revenue />} />
+            <Route path="totalOrders" element={<Orders />} />
+            <Route path="allProducts" element={<Products />} />
+            <Route path="topSellingProducts" element={<TopSellingProductsChart />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="products" element={<ProductManagement />} />
+            <Route path="products/:id/edit" element={<EditProductPage />} />
+            <Route path="orders" element={<OrderManagement />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </Provider>

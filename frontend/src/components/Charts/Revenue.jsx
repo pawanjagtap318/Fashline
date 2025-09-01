@@ -1,85 +1,10 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAllOrders } from "../../redux/slices/adminOrderSlice";
-import { useDispatch } from "react-redux";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-
-const styles = {
-    container: {
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        padding: '30px',
-        maxWidth: '960px',
-        margin: '40px auto',
-        backgroundColor: '#fff',
-        borderRadius: '10px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-        textAlign: 'center',
-    },
-    heading: {
-        fontSize: '2.2em',
-        color: '#333',
-        marginBottom: '30px',
-        fontWeight: '600',
-        borderBottom: '2px solid #eee',
-        paddingBottom: '15px',
-    },
-    message: {
-        fontSize: '1.1em',
-        color: '#555',
-        padding: '20px',
-        backgroundColor: '#f0f8ff',
-        borderRadius: '8px',
-        margin: '20px 0',
-    },
-    errorMessage: {
-        fontSize: '1.1em',
-        color: '#d32f2f',
-        backgroundColor: '#ffebee',
-        padding: '20px',
-        borderRadius: '8px',
-        margin: '20px 0',
-        border: '1px solid #ef9a9a',
-    },
-    chartWrapper: {
-        marginTop: '30px',
-        padding: '20px',
-        backgroundColor: '#f9f9f9',
-        borderRadius: '8px',
-        border: '1px solid #eee',
-    },
-    axisLabels: {
-        fontSize: '0.9em',
-        fill: '#666',
-    },
-    tooltipContent: {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
-        padding: '10px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    },
-    tooltipLabel: {
-        color: '#555',
-        fontWeight: 'bold',
-        marginBottom: '5px',
-    },
-    legend: {
-        paddingTop: '15px',
-        fontSize: '0.95em',
-        color: '#555',
-    },
-    noDataMessage: {
-        fontSize: '1.1em',
-        color: '#888',
-        padding: '30px',
-        border: '1px dashed #ccc',
-        borderRadius: '8px',
-        backgroundColor: '#fafafa',
-    }
-};
 
 function Revenue() {
     const { user } = useSelector((state) => state.auth);
@@ -140,7 +65,6 @@ function Revenue() {
             const endKey = toYear * 100 + toMonth;
             const currentKey = year * 100 + month;
 
-            // Filter by range
             if (currentKey >= startKey && currentKey <= endKey) {
                 const key = `${year}-${month.toString().padStart(2, "0")}`;
                 if (!monthlyData[key]) {
@@ -171,162 +95,133 @@ function Revenue() {
         saveAs(blob, `Orders_${fromYear}-${fromMonth}_to_${toYear}-${toMonth}.xlsx`);
     };
 
-    if (loading) return <p>Loading...</p>
-    if (error) return <p>Error: {error}</p>
+    if (loading) return <p className="text-center text-gray-500 mt-10">Loading...</p>;
+    if (error) return <p className="text-center text-red-500 mt-10">Error: {error}</p>;
 
     return (
-        <div style={styles.container}>
-            <h2 style={styles.heading}>Monthly Order Overview</h2>
+        <div className="max-w-6xl mx-auto p-6 bg-white shadow-xl rounded-2xl">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6 pb-3 border-b">
+                📊 Monthly Order Overview
+            </h2>
 
-            {loading && <p style={styles.message}>Loading order data...</p>}
-            {error && <p style={styles.errorMessage}>Error: {error}. Please try again.</p>}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-end bg-gray-50 p-5 rounded-xl shadow-sm mb-6">
+                {/* From Year */}
+                <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">From Year</label>
+                    <select
+                        value={fromYear}
+                        onChange={(e) => setFromYear(Number(e.target.value))}
+                        className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                    >
+                        {[2024, 2025, 2026, 2027].map((year) => (
+                            <option key={year}>{year}</option>
+                        ))}
+                    </select>
+                </div>
 
-            <div
-                style={{
-                    display: "flex",
-                    gap: "20px",
-                    marginBottom: "25px",
-                    flexWrap: "wrap",
-                    background: "#f9fafb",
-                    padding: "15px 20px",
-                    borderRadius: "10px",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                    alignItems: "flex-end",
-                }}
-            >
-                {[
-                    { label: "From Year", value: fromYear, onChange: (e) => setFromYear(Number(e.target.value)), options: [2024, 2025, 2026, 2027] },
-                    { label: "From Month", value: fromMonth, onChange: (e) => setFromMonth(Number(e.target.value)), options: monthNames.map((m, i) => ({ label: m, value: i + 1 })) },
-                    { label: "To Year", value: toYear, onChange: (e) => setToYear(Number(e.target.value)), options: [2024, 2025, 2026, 2027] },
-                    { label: "To Month", value: toMonth, onChange: (e) => setToMonth(Number(e.target.value)), options: monthNames.map((m, i) => ({ label: m, value: i + 1 })) },
-                ].map((field, index) => (
-                    <div key={index} style={{ display: "flex", flexDirection: "column", minWidth: "120px" }}>
-                        <label style={{ fontSize: "0.9rem", fontWeight: "600", color: "#374151", marginBottom: "5px" }}>
-                            {field.label}
-                        </label>
-                        <select
-                            value={field.value}
-                            onChange={field.onChange}
-                            style={{
-                                padding: "8px 12px",
-                                borderRadius: "6px",
-                                border: "1px solid #d1d5db",
-                                fontSize: "0.95rem",
-                                backgroundColor: "white",
-                                cursor: "pointer",
-                                transition: "border-color 0.2s ease",
-                            }}
-                            onMouseOver={(e) => (e.target.style.borderColor = "#4F46E5")}
-                            onMouseOut={(e) => (e.target.style.borderColor = "#d1d5db")}
-                        >
-                            {field.options.map((opt, i) =>
-                                typeof opt === "object" ? (
-                                    <option key={i} value={opt.value}>
-                                        {opt.label}
-                                    </option>
-                                ) : (
-                                    <option key={i} value={opt}>
-                                        {opt}
-                                    </option>
-                                )
-                            )}
-                        </select>
-                    </div>
-                ))}
+                {/* From Month */}
+                <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">From Month</label>
+                    <select
+                        value={fromMonth}
+                        onChange={(e) => setFromMonth(Number(e.target.value))}
+                        className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                    >
+                        {monthNames.map((m, i) => (
+                            <option key={i} value={i + 1}>
+                                {m}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
+                {/* To Year */}
+                <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">To Year</label>
+                    <select
+                        value={toYear}
+                        onChange={(e) => setToYear(Number(e.target.value))}
+                        className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                    >
+                        {[2024, 2025, 2026, 2027].map((year) => (
+                            <option key={year}>{year}</option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* To Month */}
+                <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">To Month</label>
+                    <select
+                        value={toMonth}
+                        onChange={(e) => setToMonth(Number(e.target.value))}
+                        className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                    >
+                        {monthNames.map((m, i) => (
+                            <option key={i} value={i + 1}>
+                                {m}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            {/* Download Button */}
+            <div className="text-center mb-8">
                 <button
                     onClick={exportToExcel}
-                    style={{
-                        backgroundColor: "#4F46E5",
-                        color: "white",
-                        padding: "10px 18px",
-                        border: "none",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        fontWeight: "600",
-                        fontSize: "0.95rem",
-                        boxShadow: "0 2px 6px rgba(79, 70, 229, 0.3)",
-                        transition: "background-color 0.2s ease, transform 0.1s ease",
-                    }}
-                    onMouseOver={(e) => (e.target.style.backgroundColor = "#4338CA")}
-                    onMouseOut={(e) => (e.target.style.backgroundColor = "#4F46E5")}
-                    onMouseDown={(e) => (e.target.style.transform = "scale(0.97)")}
-                    onMouseUp={(e) => (e.target.style.transform = "scale(1)")}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition-all"
                 >
                     📥 Download Excel
                 </button>
             </div>
 
-
-            <div style={{ marginBottom: '20px' }}>
-                <label htmlFor="year-select" style={{ marginRight: '10px' }}>Select Year:</label>
+            {/* Year Selector */}
+            <div className="text-center mb-6">
+                <label className="mr-3 font-medium text-gray-700">Select Year:</label>
                 <select
-                    id="year-select"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(Number(e.target.value))}
-                    style={{
-                        padding: '8px 12px',
-                        borderRadius: '5px',
-                        border: '1px solid #ccc',
-                        fontSize: '1em'
-                    }}
+                    className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
                 >
-                    {[2024, 2025, 2026, 2027].map((year) => (
-                        <option key={year} value={year}>{year}</option>
+                    {[2024, 2025, 2026, 2027, 2028].map((year) => (
+                        <option key={year}>{year}</option>
                     ))}
                 </select>
             </div>
 
-            {!loading && !error && (
-                <div style={styles.chartWrapper}>
-                    {data.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={400}>
-                            <BarChart
-                                data={data}
-                                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                                <XAxis
-                                    dataKey="name"
-                                    tickLine={false}
-                                    axisLine={{ stroke: '#ccc' }}
-                                    style={styles.axisLabels}
-                                />
-                                <YAxis
-                                    tickLine={false}
-                                    axisLine={false}
-                                    style={styles.axisLabels}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
-                                    content={({ active, payload, label }) => {
-                                        if (active && payload && payload.length) {
-                                            const data = payload[0].payload;
-                                            return (
-                                                <div style={styles.tooltipContent}>
-                                                    <div style={styles.tooltipLabel}>{label}</div>
-                                                    <p style={{ margin: 0 }}>Orders: {data.orders}</p>
-                                                    <p style={{ margin: 0 }}>Revenue: ₹{data.revenue}</p>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    }}
-                                />
-                                <Legend wrapperStyle={styles.legend} />
-                                <Bar
-                                    dataKey="orders"
-                                    fill="#2196F3"
-                                    name="Number of Orders"
-                                    barSize={40}
-                                />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <p style={styles.noDataMessage}>No order data available to display the chart.</p>
-                    )}
-                </div>
-            )}
+            {/* Chart */}
+            <div className="bg-gray-50 rounded-xl shadow-inner p-6">
+                {data.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={data} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                            <XAxis dataKey="name" tickLine={false} axisLine={{ stroke: "#ccc" }} />
+                            <YAxis tickLine={false} axisLine={false} />
+                            <Tooltip
+                                cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                                content={({ active, payload, label }) => {
+                                    if (active && payload && payload.length) {
+                                        const data = payload[0].payload;
+                                        return (
+                                            <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+                                                <p className="font-semibold text-gray-700">{label}</p>
+                                                <p className="text-sm text-gray-600">Orders: {data.orders}</p>
+                                                <p className="text-sm text-gray-600">Revenue: ₹{data.revenue}</p>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: "10px" }} />
+                            <Bar dataKey="orders" fill="#4F46E5" name="Number of Orders" barSize={40} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <p className="text-gray-500 text-center py-10">No order data available to display.</p>
+                )}
+            </div>
         </div>
     )
 }

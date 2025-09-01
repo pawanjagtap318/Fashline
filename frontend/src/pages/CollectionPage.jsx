@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FaFilter } from "react-icons/fa"
 import FilterSidebar from '../components/Products/FilterSidebar';
 import SortOptions from '../components/Products/SortOptions';
@@ -26,7 +26,6 @@ function CollectionPage() {
   }
 
   const handleClicksOutside = (e) => {
-    // Close sidebar is clicked outside
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setIsSidebarOpen(false);
     }
@@ -40,39 +39,56 @@ function CollectionPage() {
     return () => {
       document.removeEventListener("mousedown", handleClicksOutside);
     }
-  }, [])
+  }, []);
 
   return (
-    <div className='flex flex-col lg:flex-row'>
-      <button
-        onClick={toggleSidebar}
-        className="lg:hidden border p-2 flex justify-center items-center"
-      >
-        <FaFilter className="mr-2" />
-        Filters
-      </button>
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+      {/* Mobile Filter Toggle */}
+      <div className="lg:hidden sticky top-0 z-40 bg-white p-3 border-b shadow-sm flex items-center justify-between">
+        <h2 className="text-lg font-semibold uppercase tracking-wide">
+          {"All Collections"}
+        </h2>
+        <button
+          onClick={toggleSidebar}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg transition"
+        >
+          <FaFilter />
+          Filters
+        </button>
+      </div>
 
-      {/* Filter Sidebar */}
+      {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 z-50 left-0 
-        w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
+        className={`${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 left-0 
+        w-96 bg-white shadow-2xl overflow-y-auto transition-transform duration-300
+        lg:static lg:translate-x-0 lg:shadow-none lg:border-r lg:bg-gray-100`}
       >
+        <div className="border-b lg:border-none">
+          {/* <h3 className="text-lg font-semibold text-gray-700">Filters</h3> */}
+        </div>
         <FilterSidebar />
       </div>
-      <div className="flex-grow p-4">
-        <h2 className="text-2xl uppercase mb-4">
-          All Collections
-        </h2>
 
-        {/* Sort Options */}
-        <SortOptions />
+      {/* Main Content */}
+      <div className="flex-grow p-4 lg:p-6">
+        {/* Header & Sort */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 tracking-wide uppercase">
+            {"All Collections"}
+          </h2>
+          <div className="mt-3 lg:mt-0">
+            <SortOptions />
+          </div>
+        </div>
 
         {/* Product Grid */}
-        <ProductGrid products={products} loading={loading} error={error} />
+        <div className="bg-white rounded-2xl shadow-sm p-4 lg:p-6">
+          <ProductGrid products={products} loading={loading} error={error} />
+        </div>
       </div>
     </div>
   )
 }
 
-export default CollectionPage
+export default CollectionPage;
