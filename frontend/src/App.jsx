@@ -17,9 +17,9 @@ import UserManagement from "./components/Admin/UserManagement"
 import ProductManagement from "./components/Admin/ProductManagement"
 import EditProductPage from "./components/Admin/EditProductPage"
 import OrderManagement from "./components/Admin/OrderManagement"
-import Revenue from "./components/Charts/revenue";
+import Revenue from "./components/Charts/Revenue";
 import Orders from "./components/Charts/Orders";
-import TopSellingProductsChart from "./components/Charts/TotalProducts/TopSellingProducts";
+// import TopSellingProductsChart from "./components/Charts/TotalProducts/TopSellingProducts";
 import Products from "./components/Charts/Products";
 import OffersPage from "./pages/OffersPage";
 
@@ -65,7 +65,7 @@ function App() {
             <Route path="revenue" element={<Revenue />} />
             <Route path="totalOrders" element={<Orders />} />
             <Route path="allProducts" element={<Products />} />
-            <Route path="topSellingProducts" element={<TopSellingProductsChart />} />
+            {/* <Route path="topSellingProducts" element={<TopSellingProductsChart />} /> */}
             <Route path="users" element={<UserManagement />} />
             <Route path="products" element={<ProductManagement />} />
             <Route path="products/:id/edit" element={<EditProductPage />} />
