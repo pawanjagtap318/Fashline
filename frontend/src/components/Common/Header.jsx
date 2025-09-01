@@ -6,7 +6,7 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
       {/* Topbar */}
-      <div className="bg-gray-100 text-gray-700 text-sm py-2">
+      <div className="bg-gray-100 text-gray-700 text-sm">
         <Topbar />
       </div>
 
