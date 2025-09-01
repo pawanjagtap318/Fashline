@@ -18,7 +18,24 @@ const offersRoutes = require("./routes/offersRoutes");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+    "https://fashline.vercel.app",  // your frontend URL
+    "http://localhost:5173"          // for local frontend testing (Vite default port)
+];
+
+app.use(cors({
+    origin: function(origin, callback) {
+        // allow requests with no origin (like mobile apps, curl)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true
+}));
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
