@@ -4,7 +4,6 @@ import login from "../assets/login.webp"
 import { loginUser } from '../redux/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { mergeCart } from '../redux/slices/cartSlice';
-import Logo from '../assets/Logo.png';
 
 function Login() {
     const [email, setEmail] = useState("");

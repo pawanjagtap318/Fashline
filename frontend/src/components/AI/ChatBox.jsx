@@ -31,7 +31,7 @@ export default function ChatBox({ chatBoxOpen, setChatBoxOpen }) {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:9000/api/chat", { prompt: input });
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, { prompt: input });
       const firstLine = res.data.reply.split("\n")[0];
       const [type, productId] = firstLine.split(",").map(s => s.trim());
 
