@@ -45,7 +45,7 @@ function CollectionPage() {
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden sticky top-0 z-40 bg-white p-3 border-b shadow-sm flex items-center justify-between">
-        <h2 className="text-lg font-semibold uppercase tracking-wide">
+        <h2 className="text-xl font-extrabold uppercase tracking-wide">
           {"All Collections"}
         </h2>
         <button
@@ -60,14 +60,11 @@ function CollectionPage() {
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 left-0 
-        w-96 bg-white shadow-2xl overflow-y-auto transition-transform duration-300
+        className={`${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 left-0 z-50 
+        lg:w-96 w-52 bg-white shadow-2xl overflow-y-auto transition-transform duration-300
         lg:static lg:translate-x-0 lg:shadow-none lg:border-r lg:bg-gray-100`}
       >
-        <div className="border-b lg:border-none">
-          {/* <h3 className="text-lg font-semibold text-gray-700">Filters</h3> */}
-        </div>
-        <FilterSidebar />
+        <FilterSidebar closeSidebar={() => setIsSidebarOpen(false)} />
       </div>
 
       {/* Main Content */}

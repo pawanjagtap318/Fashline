@@ -8,6 +8,7 @@ import { IoMdClose } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 import ChatBox from '../AI/ChatBox'
 import Logo from '../../assets/Logo.png';
+import MobileLogo from '../../assets/MobileLogo.png';
 
 function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -34,14 +35,19 @@ function Navbar() {
   return (
     <>
       <nav className='container mx-auto flex items-center justify-between py-1 px-6'>
-
-        {/* Left - Logo */}
         <div className="hover:bg-gray-100 hover:scale-105 hover:rounded-2xl">
-          <Link to='/' className='flex items-center hover:scale-105 transition-transform'>
+          <Link to="/" className="flex items-center hover:scale-105 transition-transform">
+            {/* Desktop Logo */}
             <img
               src={Logo}
               alt="Fashline Logo"
-              className="h-12 w-auto"
+              className="hidden sm:block h-12 w-auto"
+            />
+            {/* Mobile Logo */}
+            <img
+              src={MobileLogo}
+              alt="Fashline Mobile Logo"
+              className="block sm:hidden h-12 w-auto"
             />
           </Link>
         </div>
@@ -117,7 +123,7 @@ function Navbar() {
       {navDrawerOpen && (
         <div
           onClick={toggleNavDrawer}
-          className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-opacity-40 backdrop-blur-xs transition-opacity duration-300 bg-opacity-40 z-40"
         ></div>
       )}
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
 
-function FilterSidebar() {
+function FilterSidebar({ closeSidebar }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [tooltipPos, setTooltipPos] = useState(0);
@@ -162,6 +162,8 @@ function FilterSidebar() {
 
     setFilters(newFilters);
     updateURLParams(newFilters);
+
+    if (closeSidebar) closeSidebar();
   };
 
   const updateURLParams = (newFilters) => {
@@ -184,8 +186,10 @@ function FilterSidebar() {
     setPriceRange([0, newPrice]);
 
     const newFilters = { ...filters, minPrice: 0, maxPrice: newPrice };
-    setFilters(newFilters);  // change
+    setFilters(newFilters); 
     updateURLParams(newFilters);
+
+    if (closeSidebar) closeSidebar();
   }
 
   return (
@@ -400,7 +404,7 @@ function FilterSidebar() {
             {/* Tooltip */}
             <div
               className="absolute -top-8 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow pointer-events-none transition"
-              style={{ left: `${tooltipPos}px`, transform: "translateX(-50%)" }}
+              style={{ left: `${tooltipPos}px`, transform: `${priceRange[1] > 20 ? "translateX(-90%)" : "translateX(-10%)"}` }}
             >
               ${priceRange[1]}
             </div>
