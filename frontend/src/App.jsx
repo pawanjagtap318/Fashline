@@ -19,7 +19,6 @@ import EditProductPage from "./components/Admin/EditProductPage"
 import OrderManagement from "./components/Admin/OrderManagement"
 import Revenue from "./components/Charts/Revenue";
 import Orders from "./components/Charts/Orders";
-// import TopSellingProductsChart from "./components/Charts/TotalProducts/TopSellingProducts";
 import Products from "./components/Charts/Products";
 import OffersPage from "./pages/OffersPage";
 
@@ -29,8 +28,11 @@ import ProtectedRoute from "./components/Common/ProtectedRoute"
 import FeedbackForm from "./pages/FeedBackForm"
 import ScrollToTop from "./components/Common/ScrollToTop"
 
+import { setupAxiosInterceptors } from "../src/redux/slices/authSlice"
+
 
 function App() {
+  setupAxiosInterceptors(store);
 
   return (
     <Provider store={store}>
@@ -65,7 +67,6 @@ function App() {
             <Route path="revenue" element={<Revenue />} />
             <Route path="totalOrders" element={<Orders />} />
             <Route path="allProducts" element={<Products />} />
-            {/* <Route path="topSellingProducts" element={<TopSellingProductsChart />} /> */}
             <Route path="users" element={<UserManagement />} />
             <Route path="products" element={<ProductManagement />} />
             <Route path="products/:id/edit" element={<EditProductPage />} />

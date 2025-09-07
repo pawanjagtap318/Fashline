@@ -56,6 +56,22 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+export const setupAxiosInterceptors = (store) => {
+    axios.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (
+                error.response?.status === 401 &&
+                error.response?.data?.message?.includes("expired")
+            ) {
+                store.dispatch(logout());
+                window.location.href = "/login"; // force redirect
+            }
+            return Promise.reject(error);
+        }
+    );
+};
+
 // Create Slice
 const authSlice = createSlice({
     name: "auth",
